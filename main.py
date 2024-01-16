@@ -46,14 +46,15 @@ class AsistenteScrum:
                 cv2.destroyAllWindows()
                 return None
 
-def reconocer_usuario_en_imagen(self, imagen):
-    for nombre_usuario, datos_usuario in self.usuarios_registrados.items():
-        foto_registrada = cv2.imread(datos_usuario['foto'], cv2.IMREAD_GRAYSCALE)
-        # Aquí puedes utilizar algún método de comparación de características, como la 		correlación
-        correlacion = cv2.matchTemplate(imagen, foto_registrada, cv2.TM_CCOEFF_NORMED)
-        if correlacion > umbral_de_correlacion:
-            return nombre_usuario
-    return None
+    def reconocer_usuario_en_imagen(self, imagen):
+        for nombre_usuario, datos_usuario in self.usuarios_registrados.items():
+            foto_registrada = cv2.imread(datos_usuario['foto'], cv2.IMREAD_GRAYSCALE)
+            # Aquí puedes utilizar algún método de comparación de características, como la correlación
+            correlacion = cv2.matchTemplate(imagen, foto_registrada, cv2.TM_CCOEFF_NORMED)
+            # if correlacion > umbral_de_correlacion:
+            if correlacion > 0.6:
+                return nombre_usuario
+        return None
 
     def capturar_imagen(self, nombre_usuario):
         # Inicializar la cámara
@@ -83,6 +84,7 @@ def reconocer_usuario_en_imagen(self, imagen):
 
         try:
             orden = recognizer.recognize_google(audio, language="es-ES").lower()
+            print(f"Orden reconocida por voz: {orden}")  # Mensaje de depuración
             return orden
         except sr.UnknownValueError:
             return "No se pudo entender la orden"
@@ -91,8 +93,10 @@ def reconocer_usuario_en_imagen(self, imagen):
 
     def controlar_asistencia(self):
         orden = self.reconocer_voz()
+        print(f"Orden reconocida: {orden}")  # Mensaje de depuración
 
         if "controlar asistencia" in orden:
+            print("Iniciando reconocimiento facial...")  # Mensaje de depuración
             nombre_usuario = self.reconocer_usuario_con_camara()
 
             if nombre_usuario:
