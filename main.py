@@ -46,6 +46,22 @@ class AsistenteScrum:
                 cv2.destroyAllWindows()
                 return None
 
+    def mostrar_camara(self):
+        # Inicializar la cámara
+        cap = cv2.VideoCapture(0)
+
+        while True:
+            # Capturar el fotograma
+            ret, frame = cap.read()
+
+            # Mostrar el fotograma en una ventana
+            cv2.imshow('Vista de la Cámara', frame)
+
+            # Salir si se presiona la tecla 'Esc'
+            if cv2.waitKey(1) == 27:
+                cap.release()
+                cv2.destroyAllWindows()
+                break
     def reconocer_usuario_en_imagen(self, imagen):
         for nombre_usuario, datos_usuario in self.usuarios_registrados.items():
             foto_registrada = cv2.imread(datos_usuario['foto'], cv2.IMREAD_GRAYSCALE)
@@ -93,10 +109,11 @@ class AsistenteScrum:
 
     def controlar_asistencia(self):
         orden = self.reconocer_voz()
-        print(f"Orden reconocida: {orden}")  # Mensaje de depuración
+        print(f"Orden reconocida: {orden}")
 
-        if "controlar asistencia" in orden:
-            print("Iniciando reconocimiento facial...")  # Mensaje de depuración
+        if "iniciar reconocimiento" in orden:
+            print("Iniciando reconocimiento facial...")
+            self.mostrar_camara()
             nombre_usuario = self.reconocer_usuario_con_camara()
 
             if nombre_usuario:
