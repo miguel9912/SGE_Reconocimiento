@@ -1,6 +1,6 @@
 import cv2
-import os
 import speech_recognition as sr
+import os
 
 class AsistenteScrum:
     def __init__(self):
@@ -109,21 +109,30 @@ class AsistenteScrum:
 
         if "registrar usuario" in orden:
             nombre_usuario = input("Dime tu nombre: ")
-            datos_personales = input("Dime tus datos personales: ")
 
-            ruta_imagen = self.capturar_imagen(nombre_usuario)
+            # Verificar si el directorio "caras" existe, si no, crearlo
+            if not os.path.exists("caras"):
+                os.makedirs("caras")
 
+            # Capturar la imagen con la webcam
+            ruta_imagen = os.path.join("caras", f"{nombre_usuario.replace(' ', '_')}.jpg")
+            cap = cv2.VideoCapture(0)
+            ret, frame = cap.read()
+            cv2.imwrite(ruta_imagen, frame)
+            cap.release()
+            cv2.destroyAllWindows()
+
+            # Registrar al usuario
             self.usuarios_registrados[nombre_usuario] = {
-                'datos_personales': datos_personales,
                 'foto': ruta_imagen
             }
-            print(f"Usuario {nombre_usuario} registrado con éxito.")
+            print(f"Usuario {nombre_usuario} registrado con éxito en {ruta_imagen}.")
 
     def salir_aplicacion(self):
         orden = self.reconocer_voz()
 
         if "salir de la aplicación" in orden:
-            print("Hasta luego. Gracias por usar la aplicación.")
+            print("Hasta luego. Gracias por usar la aplicación de reconocimiento facial.")
             exit()
 
 # Ejemplo de uso
