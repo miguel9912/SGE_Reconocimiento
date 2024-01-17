@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a3f0a12a-3167-4b59-ae80-44ba719021a9" name="Changes" comment="Tomar foto">
+    <list default="true" id="a3f0a12a-3167-4b59-ae80-44ba719021a9" name="Changes" comment="Borrado">
+      <change afterPath="$PROJECT_DIR$/Persona.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Asistente.py" beforeDir="false" afterPath="$PROJECT_DIR$/Asistente.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
@@ -131,7 +133,23 @@
       <option name="project" value="LOCAL" />
       <updated>1705518803993</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Borrado">
+      <option name="closed" value="true" />
+      <created>1705520626383</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1705520626383</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Borrado">
+      <option name="closed" value="true" />
+      <created>1705520674433</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1705520674433</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -140,9 +158,10 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Camara activada" />
     <MESSAGE value="Tomar foto" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tomar foto" />
+    <MESSAGE value="Borrado" />
+    <option name="LAST_COMMIT_MESSAGE" value="Borrado" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/SGE_Reconocimiento$main.coverage" NAME="main Coverage Results" MODIFIED="1705518885525" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SGE_Reconocimiento$main.coverage" NAME="main Coverage Results" MODIFIED="1705521190785" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
