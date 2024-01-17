@@ -40,6 +40,19 @@ class AsistenteScrum:
             # Mostrar el fotograma con el rectángulo alrededor del rostro
             cv2.imshow('Reconocimiento Facial', frame)
 
+            # Si no hay usuarios registrados, tomar una foto y cerrar la cámara
+            if not self.usuarios_registrados:
+                print("Usuario no registrado. Tomando foto y cerrando la cámara...")
+                ruta_imagen = self.tomar_foto_y_cerrar_camara()
+                nombre_usuario = self.reconocer_voz()
+
+                # Registrar al usuario
+                self.usuarios_registrados[nombre_usuario] = {
+                    'foto': ruta_imagen
+                }
+                print(f"Usuario {nombre_usuario} registrado con éxito en {ruta_imagen}.")
+                return nombre_usuario
+
             # Salir si se presiona la tecla 'Esc'
             if cv2.waitKey(1) == 27:
                 cap.release()
@@ -62,6 +75,22 @@ class AsistenteScrum:
                 cap.release()
                 cv2.destroyAllWindows()
                 break
+
+    def tomar_foto_y_cerrar_camara(self):
+        cap = cv2.VideoCapture(0)
+
+        # Capturar el fotograma
+        ret, frame = cap.read()
+
+        # Guardar la imagen en un archivo
+        ruta_imagen = self.reconstruir_nombre_imagen("temp_user")
+        cv2.imwrite(ruta_imagen, frame)
+
+        cap.release()
+        cv2.destroyAllWindows()
+
+        return ruta_imagen
+
     def reconocer_usuario_en_imagen(self, imagen):
         for nombre_usuario, datos_usuario in self.usuarios_registrados.items():
             foto_registrada = cv2.imread(datos_usuario['foto'], cv2.IMREAD_GRAYSCALE)
@@ -95,16 +124,18 @@ class AsistenteScrum:
         recognizer = sr.Recognizer()
 
         with sr.Microphone() as source:
-            print("Escuchando... Di una orden:")
+            print("Escuchando... Di tu nombre:")
             audio = recognizer.listen(source)
 
         try:
-            orden = recognizer.recognize_google(audio, language="es-ES").lower()
-            print(f"Orden reconocida por voz: {orden}")  # Mensaje de depuración
-            return orden
+            nombre_usuario = recognizer.recognize_google(audio, language="es-ES").lower()
+            print(f"Nombre reconocido por voz: {nombre_usuario}")  # Mensaje de depuración
+            return nombre_usuario
         except sr.UnknownValueError:
-            return "No se pudo entender la orden"
+            print("No se pudo entender el nombre")
+            return "No se pudo entender el nombre"
         except sr.RequestError as e:
+            print(f"Error en la solicitud de reconocimiento de voz: {e}")
             return f"Error en la solicitud de reconocimiento de voz: {e}"
 
     def controlar_asistencia(self):
@@ -125,7 +156,7 @@ class AsistenteScrum:
         orden = self.reconocer_voz()
 
         if "registrar usuario" in orden:
-            nombre_usuario = input("Dime tu nombre: ")
+            nombre_usuario = self.reconocer_voz()
 
             # Verificar si el directorio "caras" existe, si no, crearlo
             if not os.path.exists("caras"):
