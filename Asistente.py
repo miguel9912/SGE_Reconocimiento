@@ -22,7 +22,6 @@ def audio_to_text():
 
         # Informar que comenzó la grabación
         print('Puedes comenzar a hablar')
-
         # Guardar audio
         audio = r.listen(origen, )
         try:
@@ -51,12 +50,8 @@ def audio_to_text():
 def talk(msg):
     newVoiceRate = 160
 
-    # Encender el motor pyttsx3
     engine = pyttsx3.init()
-
     engine.setProperty('rate', newVoiceRate)
-    #engine.setProperty('voice', 'com.apple.eloquence.es-ES.Eddy')
-    # Pronunciar mensaje
     engine.say(msg)
     engine.runAndWait()
 
