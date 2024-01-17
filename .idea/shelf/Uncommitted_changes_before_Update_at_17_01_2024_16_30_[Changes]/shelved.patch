@@ -1,0 +1,60 @@
+Index: main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import cv2\r\nimport os\r\nimport speech_recognition as sr\r\n\r\nclass AsistenteScrum:\r\n    def __init__(self):\r\n        self.usuarios_registrados = {}\r\n\r\n    def reconocer_usuario_con_camara(self):\r\n        # Inicializar el clasificador facial de OpenCV\r\n        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')\r\n\r\n        # Inicializar la cámara\r\n        cap = cv2.VideoCapture(0)\r\n\r\n        while True:\r\n            # Capturar el fotograma\r\n            ret, frame = cap.read()\r\n\r\n            # Convertir a escala de grises para el reconocimiento facial\r\n            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)\r\n\r\n            # Detectar rostros en el fotograma\r\n            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5, minSize=(30, 30))\r\n\r\n            for (x, y, w, h) in faces:\r\n                # Dibujar un rectángulo alrededor del rostro detectado\r\n                cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)\r\n\r\n                # Recortar la región del rostro\r\n                roi_gray = gray[y:y+h, x:x+w]\r\n\r\n                # Devolver el nombre del usuario si es reconocido\r\n                nombre_usuario = self.reconocer_usuario_en_imagen(roi_gray)\r\n                if nombre_usuario:\r\n                    cap.release()\r\n                    cv2.destroyAllWindows()\r\n                    return nombre_usuario\r\n\r\n            # Mostrar el fotograma con el rectángulo alrededor del rostro\r\n            cv2.imshow('Reconocimiento Facial', frame)\r\n\r\n            # Salir si se presiona la tecla 'Esc'\r\n            if cv2.waitKey(1) == 27:\r\n                cap.release()\r\n                cv2.destroyAllWindows()\r\n                return None\r\n\r\ndef reconocer_usuario_en_imagen(self, imagen):\r\n    for nombre_usuario, datos_usuario in self.usuarios_registrados.items():\r\n        foto_registrada = cv2.imread(datos_usuario['foto'], cv2.IMREAD_GRAYSCALE)\r\n        # Aquí puedes utilizar algún método de comparación de características, como la \t\tcorrelación\r\n        correlacion = cv2.matchTemplate(imagen, foto_registrada, cv2.TM_CCOEFF_NORMED)\r\n        if correlacion > umbral_de_correlacion:\r\n            return nombre_usuario\r\n    return None\r\n\r\n    def capturar_imagen(self, nombre_usuario):\r\n        # Inicializar la cámara\r\n        cap = cv2.VideoCapture(0)\r\n\r\n        # Capturar el fotograma\r\n        ret, frame = cap.read()\r\n\r\n        # Guardar la imagen en un archivo\r\n        ruta_imagen = self.reconstruir_nombre_imagen(nombre_usuario)\r\n        cv2.imwrite(ruta_imagen, frame)\r\n\r\n        cap.release()\r\n        cv2.destroyAllWindows()\r\n\r\n        return ruta_imagen\r\n\r\n    def reconstruir_nombre_imagen(self, nombre_usuario):\r\n        return f\"{nombre_usuario.replace(' ', '_')}.jpg\"\r\n\r\n    def reconocer_voz(self):\r\n        recognizer = sr.Recognizer()\r\n\r\n        with sr.Microphone() as source:\r\n            print(\"Escuchando... Di una orden:\")\r\n            audio = recognizer.listen(source)\r\n\r\n        try:\r\n            orden = recognizer.recognize_google(audio, language=\"es-ES\").lower()\r\n            return orden\r\n        except sr.UnknownValueError:\r\n            return \"No se pudo entender la orden\"\r\n        except sr.RequestError as e:\r\n            return f\"Error en la solicitud de reconocimiento de voz: {e}\"\r\n\r\n    def controlar_asistencia(self):\r\n        orden = self.reconocer_voz()\r\n\r\n        if \"controlar asistencia\" in orden:\r\n            nombre_usuario = self.reconocer_usuario_con_camara()\r\n\r\n            if nombre_usuario:\r\n                print(f\"Bienvenido, {nombre_usuario}.\")\r\n            else:\r\n                print(\"Usuario no reconocido. ¿Desea registrarse?\")\r\n\r\n    def registrar_usuario(self):\r\n        orden = self.reconocer_voz()\r\n\r\n        if \"registrar usuario\" in orden:\r\n            nombre_usuario = input(\"Dime tu nombre: \")\r\n            datos_personales = input(\"Dime tus datos personales: \")\r\n\r\n            ruta_imagen = self.capturar_imagen(nombre_usuario)\r\n\r\n            self.usuarios_registrados[nombre_usuario] = {\r\n                'datos_personales': datos_personales,\r\n                'foto': ruta_imagen\r\n            }\r\n            print(f\"Usuario {nombre_usuario} registrado con éxito.\")\r\n\r\n    def salir_aplicacion(self):\r\n        orden = self.reconocer_voz()\r\n\r\n        if \"salir de la aplicación\" in orden:\r\n            print(\"Hasta luego. Gracias por usar la aplicación.\")\r\n            exit()\r\n\r\n# Ejemplo de uso\r\nasistente = AsistenteScrum()\r\n\r\nwhile True:\r\n    asistente.controlar_asistencia()\r\n    asistente.registrar_usuario()\r\n    asistente.salir_aplicacion()
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main.py b/main.py
+--- a/main.py	(revision 2626c2346b294f94670a5fbf71a97c9e67b07dfb)
++++ b/main.py	(date 1705419717627)
+@@ -46,14 +46,15 @@
+                 cv2.destroyAllWindows()
+                 return None
+ 
+-def reconocer_usuario_en_imagen(self, imagen):
+-    for nombre_usuario, datos_usuario in self.usuarios_registrados.items():
+-        foto_registrada = cv2.imread(datos_usuario['foto'], cv2.IMREAD_GRAYSCALE)
+-        # Aquí puedes utilizar algún método de comparación de características, como la 		correlación
+-        correlacion = cv2.matchTemplate(imagen, foto_registrada, cv2.TM_CCOEFF_NORMED)
+-        if correlacion > umbral_de_correlacion:
+-            return nombre_usuario
+-    return None
++    def reconocer_usuario_en_imagen(self, imagen):
++        for nombre_usuario, datos_usuario in self.usuarios_registrados.items():
++            foto_registrada = cv2.imread(datos_usuario['foto'], cv2.IMREAD_GRAYSCALE)
++            # Aquí puedes utilizar algún método de comparación de características, como la correlación
++            correlacion = cv2.matchTemplate(imagen, foto_registrada, cv2.TM_CCOEFF_NORMED)
++            # if correlacion > umbral_de_correlacion:
++            if correlacion > 0.6:
++                return nombre_usuario
++        return None
+ 
+     def capturar_imagen(self, nombre_usuario):
+         # Inicializar la cámara
+@@ -83,6 +84,7 @@
+ 
+         try:
+             orden = recognizer.recognize_google(audio, language="es-ES").lower()
++            print(f"Orden reconocida por voz: {orden}")  # Mensaje de depuración
+             return orden
+         except sr.UnknownValueError:
+             return "No se pudo entender la orden"
+@@ -91,8 +93,10 @@
+ 
+     def controlar_asistencia(self):
+         orden = self.reconocer_voz()
++        print(f"Orden reconocida: {orden}")  # Mensaje de depuración
+ 
+         if "controlar asistencia" in orden:
++            print("Iniciando reconocimiento facial...")  # Mensaje de depuración
+             nombre_usuario = self.reconocer_usuario_con_camara()
+ 
+             if nombre_usuario:
+@@ -128,4 +132,4 @@
+ while True:
+     asistente.controlar_asistencia()
+     asistente.registrar_usuario()
+-    asistente.salir_aplicacion()
+\ No newline at end of file
++    asistente.salir_aplicacion()
