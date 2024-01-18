@@ -1,6 +1,7 @@
+import cv2
 import pyttsx3
 import speech_recognition as sr
-
+import pywhatkit
 import webbrowser
 import datetime
 import wikipedia
@@ -85,7 +86,6 @@ def saludo():
 
 
 
-
 def registro():
     talk('Dime tu nombre cariño')
     name = audio_to_text().lower()
@@ -96,6 +96,26 @@ def registro():
     return Persona(name, "")
 
 
+
+def takePhoto():
+    # Abre la cámara
+    cap = cv2.VideoCapture(0)
+    if not cap.isOpened():
+        talk("Error: No se pudo abrir la cámara.")
+        return
+        # Captura un solo fotograma
+    ret, frame = cap.read()
+    if ret:
+        cv2.imwrite("foto_capturada.jpg", frame)
+        talk("Foto capturada y guardada como 'foto_capturada.jpg'")
+    else:
+        talk("Error al capturar la foto.")
+
+            # Libera la cámara
+    cap.release()
+        # Captura un solo fotograma
+    ret, frame = cap.read()
+
 def comprobarRegistro():
     talk('¿Que usuario deseas comprobar?')
     name = audio_to_text().lower()
@@ -105,7 +125,7 @@ def comprobarRegistro():
             found = True
     return found
 
-def mostrarUsuarios():
+def showUsers():
     for persona in usuarios:
         print(persona.name)
 
@@ -131,6 +151,9 @@ def requests():
             else:
                 talk('El usuario no está registrado en el sistema')
         elif 'listar usuarios' in request:
-            mostrarUsuarios()
+            showUsers()
+        elif 'tomar foto' in request:
+            takePhoto()
+
 
 
