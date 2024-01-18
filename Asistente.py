@@ -35,6 +35,7 @@ def audio_to_text():
 
         except sr.RequestError:
             print('Ups, sin servicio')
+            print('esroy es para mezclar')
             return 'Esperando'
 
         except:
