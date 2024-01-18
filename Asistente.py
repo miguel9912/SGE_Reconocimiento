@@ -5,10 +5,10 @@ import webbrowser
 import datetime
 import wikipedia
 
-import Persona
+from Persona import Persona
 
 
-
+usuarios = list()
 
 # Escuchar micro y devolver audio como texto
 def audio_to_text():
@@ -18,7 +18,7 @@ def audio_to_text():
     # Configurar el micro
     with sr.Microphone() as origen:
         # Tiempo de espera desde que se activa el micro
-        r.pause_threshold = 0.8
+        r.pause_threshold = 0.5
 
         # Informar que comenzó la grabación
         print('Puedes comenzar a hablar')
@@ -79,7 +79,7 @@ def saludo():
     else:
         momento = 'Buenas tardes.'
 
-    talk(f'{momento} Soy el bicho, tu asistente personal. Por favor, dime en qué puedo ayudarte.')
+    talk(f'{momento} Soy el bicho, tu asistente personal.')
 
 
 
@@ -89,17 +89,32 @@ def saludo():
 def registro():
     talk('Dime tu nombre cariño')
     name = audio_to_text().lower()
+    print(name)
+    usuarios.append(Persona(name, ""))
+    mensaje  = f'{name} registrado exitosamente'
+    talk(mensaje)
     return Persona(name, "")
 
+
+def comprobarRegistro():
+    talk('¿Que usuario deseas comprobar?')
+    name = audio_to_text().lower()
+    found = False
+    for p in usuarios:
+        if p.name == name:
+            found = True
+    return found
+
+def mostrarUsuarios():
+    for persona in usuarios:
+        print(persona.name)
 
 
 def requests():
     saludo()
-
-    print_voices()
     stop = False
     while not stop:
-        #Activar el micro y guardar la request en un string
+        talk('¿Qué deseas hacer?')
         request = audio_to_text().lower()
         print(request)
         if 'abrir youtube' in request:
@@ -110,5 +125,12 @@ def requests():
             exit()
         elif 'registrarse' in request:
             registro()
+        elif 'comprobar registro' in request:
+            if comprobarRegistro():
+                talk('El usuario está registrado en el sistema')
+            else:
+                talk('El usuario no está registrado en el sistema')
+        elif 'listar usuarios' in request:
+            mostrarUsuarios()
 
 
