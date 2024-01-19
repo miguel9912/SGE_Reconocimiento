@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a3f0a12a-3167-4b59-ae80-44ba719021a9" name="Changes" comment="Borrado">
+    <list default="true" id="a3f0a12a-3167-4b59-ae80-44ba719021a9" name="Changes" comment="Toma Imagen">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Asistente.py" beforeDir="false" afterPath="$PROJECT_DIR$/Asistente.py" afterDir="false" />
     </list>
@@ -150,7 +150,23 @@
       <option name="project" value="LOCAL" />
       <updated>1705520674433</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Toma Imagen">
+      <option name="closed" value="true" />
+      <created>1705600707774</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1705600707774</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Toma Imagen">
+      <option name="closed" value="true" />
+      <created>1705600716999</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1705600716999</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -160,7 +176,8 @@
     <MESSAGE value="Camara activada" />
     <MESSAGE value="Tomar foto" />
     <MESSAGE value="Borrado" />
-    <option name="LAST_COMMIT_MESSAGE" value="Borrado" />
+    <MESSAGE value="Toma Imagen" />
+    <option name="LAST_COMMIT_MESSAGE" value="Toma Imagen" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/SGE_Reconocimiento$main.coverage" NAME="main Coverage Results" MODIFIED="1705600606894" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
