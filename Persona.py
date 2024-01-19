@@ -7,5 +7,10 @@ class Persona:
         return f"{self.name}"
     def __get_image__(self):
         return f"{self.image}"
+    def to_dict(self):
+        return {'name': self.name, 'image': self.image}
+
+    def __str__(self):
+        return f"Persona(name={self.name}, image={self.image})"
 
 

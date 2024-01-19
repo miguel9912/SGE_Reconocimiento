@@ -75,6 +75,34 @@ def saludo():
     talk(f'{momento} Soy el bicho, tu asistente personal.')
 
 
+
+def guardar_datos_personas(personas):
+    dict_instances = {}
+    for persona in personas:
+        dict_instances[persona.name] = persona.to_dict()
+        dict_instances[persona.image] = persona.to_dict()
+
+    result = {'Persona': dict_instances}
+
+    with open('datos_personas.json', 'w') as json_file:
+        json.dump(result, json_file, indent=2)
+    talk('Datos de personas guardados exitosamente.')
+
+def cargar_datos_personas():
+    try:
+        with open('datos_personas.json', 'r') as json_file:
+            data = json.load(json_file)
+            dict_instances = data.get('Persona', {})  # Utilizar la clave 'Persona'
+            personas = []
+
+            for name, persona_data in dict_instances.items():
+                nueva_persona = Persona(name, persona_data['image'])
+                personas.append(nueva_persona)
+
+            return personas
+    except FileNotFoundError:
+        return []
+
 def registro():
     talk('Dime tu nombre, por favor.')
 
@@ -100,13 +128,6 @@ def registro():
 
 
 def takePhoto(name):
-    # Directorio donde se guardarán las imágenes
-    directorio_imagenes = "caras"
-
-    # Crea el directorio si no existe
-    if not os.path.exists(directorio_imagenes):
-        os.makedirs(directorio_imagenes)
-
     # Abre la cámara
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
@@ -143,15 +164,12 @@ def takePhoto(name):
     # Captura un solo fotograma después de la cuenta atrás
     ret, frame = cap.read()
     if ret:
-        # Construir la ruta de la imagen
-        ruta_imagen = os.path.join(directorio_imagenes, f"{name}.jpg")
-
-        # Guarda la foto en el directorio 'caras'
-        cv2.imwrite(ruta_imagen, frame)
-
+        # Guarda la foto
+        cv2.imwrite(f"{name}.jpg", frame)
+        talk(f"Foto capturada y guardada como '{name}.jpg'")
         # Libera la cámara
         cap.release()
-        return ruta_imagen, True
+        return frame, True
     else:
         talk("Error al capturar la foto.")
         # Libera la cámara
@@ -166,8 +184,6 @@ def comprobarRegistro():
         if p.name == name:
             found = True
     return found
-
-
 
 def showUsers():
     for persona in usuarios:
@@ -202,6 +218,10 @@ def requests():
                 talk('El usuario no está registrado en el sistema')
         elif 'listar usuarios' in request:
             showUsers()
+            talk('Estos son los usuarios registrados:')
+            for persona in usuarios:
+                talk(persona.name)
+
 
 
 
