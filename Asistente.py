@@ -1,7 +1,6 @@
 import cv2
 import pyttsx3
 import speech_recognition as sr
-import pywhatkit
 import webbrowser
 import datetime
 import time
@@ -11,10 +10,9 @@ from Persona import Persona
 
 usuarios = list()
 
-# Escuchar micro y devolver audio como texto
-import time
-
-
+#########################################################
+################ CONVERTIR AUDIO A TEXTO ################
+#########################################################
 def audio_to_text(timeout=10):
     # Recognizer
     r = sr.Recognizer()
@@ -48,11 +46,20 @@ def audio_to_text(timeout=10):
 
         print('Tiempo de espera agotado')
         return 'Esperando'
+#########################################################
 
 
-# Resto del código...
 
 
+
+
+
+
+
+
+########################################
+################ HABLAR ################
+########################################
 def talk(msg):
     newVoiceRate = 160
 
@@ -60,21 +67,15 @@ def talk(msg):
     engine.setProperty('rate', newVoiceRate)
     engine.say(msg)
     engine.runAndWait()
+########################################
 
 
 
 
 
-
-def print_voices():
-    engine = pyttsx3.init()
-    for voz in engine.getProperty('voices'):
-        print(voz.id, voz)
-
-
-
-
-
+########################################
+################ SALUDO ################
+########################################
 def saludo():
 
     hour = datetime.datetime.now()
@@ -86,8 +87,18 @@ def saludo():
         momento = 'Buenas tardes.'
 
     talk(f'{momento} Soy el bicho, tu asistente personal.')
+########################################
 
 
+
+
+
+
+
+
+#############################################
+################ REGISTRARSE ################
+#############################################
 def registro():
     talk('Dime tu nombre, por favor.')
 
@@ -110,8 +121,19 @@ def registro():
         return newUser
     else:
         talk('El registro no ha podido realizarse correctamente.')
+#############################################
 
 
+
+
+
+
+
+
+
+############################################
+################ TOMAR FOTO ################
+############################################
 def takePhoto(name):
     # Abre la cámara
     cap = cv2.VideoCapture(0)
@@ -140,7 +162,7 @@ def takePhoto(name):
         cv2.imshow('Reconocimiento Facial', frame)
 
         # Espera 1 segundo entre cada cuenta regresiva
-        time.sleep(1)
+        time.sleep(250)
         talk(str(i))
 
     # Cierra la ventana de vista previa
@@ -160,7 +182,19 @@ def takePhoto(name):
         # Libera la cámara
         cap.release()
         return None, False
+############################################
 
+
+
+
+
+
+
+
+
+######################################################
+################ COMPROBAR REGISTRARO ################
+######################################################
 def comprobarRegistro():
     talk('¿Que usuario deseas comprobar?')
     name = audio_to_text().lower()
@@ -169,12 +203,27 @@ def comprobarRegistro():
         if p.name == name:
             found = True
     return found
+######################################################
 
+
+
+
+
+
+##################################################
+################ MOSTRAR USUARIOS ################
+##################################################
 def showUsers():
     for persona in usuarios:
         print(persona.name)
+##################################################
 
 
+
+
+############################################
+################ PETICIONES ################
+############################################
 def requests():
     saludo()
     stop = False
@@ -182,13 +231,7 @@ def requests():
         talk('¿Qué deseas hacer?')
         request = audio_to_text().lower()
         print(request)
-        if 'abrir youtube' in request:
-            talk('Abriendo youtube')
-            webbrowser.open('https://www.youtube.com')
-        elif 'salir' in request:
-            talk('Hasta luégo bombón')
-            exit()
-        elif 'registrarse' in request:
+        if 'registrarse' in request:
             registro()
         elif 'comprobar registro' in request:
             if comprobarRegistro():
@@ -197,6 +240,9 @@ def requests():
                 talk('El usuario no está registrado en el sistema')
         elif 'listar usuarios' in request:
             showUsers()
-
+        elif 'salir' in request:
+            talk('Hasta luégo bombón')
+            exit()
+############################################
 
 

@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a3f0a12a-3167-4b59-ae80-44ba719021a9" name="Changes" comment="Cuenta atrás2">
+    <list default="true" id="a3f0a12a-3167-4b59-ae80-44ba719021a9" name="Changes" comment="Registro con foto">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Asistente.py" beforeDir="false" afterPath="$PROJECT_DIR$/Asistente.py" afterDir="false" />
     </list>
@@ -109,6 +109,7 @@
       <workItem from="1705417813751" duration="2206000" />
       <workItem from="1705500402331" duration="2425000" />
       <workItem from="1705517271818" duration="2524000" />
+      <workItem from="1705681194433" duration="1008000" />
     </task>
     <task id="LOCAL-00001" summary="Camara activada">
       <option name="closed" value="true" />
@@ -206,7 +207,15 @@
       <option name="project" value="LOCAL" />
       <updated>1705652563089</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Registro con foto">
+      <option name="closed" value="true" />
+      <created>1705655306828</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1705655306828</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -230,9 +239,10 @@
     <MESSAGE value="Toma Imagen" />
     <MESSAGE value="Cuenta atrás" />
     <MESSAGE value="Cuenta atrás2" />
-    <option name="LAST_COMMIT_MESSAGE" value="Cuenta atrás2" />
+    <MESSAGE value="Registro con foto" />
+    <option name="LAST_COMMIT_MESSAGE" value="Registro con foto" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/SGE_Reconocimiento$main.coverage" NAME="main Coverage Results" MODIFIED="1705655178266" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SGE_Reconocimiento$main.coverage" NAME="main Coverage Results" MODIFIED="1705681315786" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
