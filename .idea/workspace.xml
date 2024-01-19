@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a3f0a12a-3167-4b59-ae80-44ba719021a9" name="Changes" comment="Toma Imagen">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Asistente.py" beforeDir="false" afterPath="$PROJECT_DIR$/Asistente.py" afterDir="false" />
-    </list>
+    <list default="true" id="a3f0a12a-3167-4b59-ae80-44ba719021a9" name="Changes" comment="Cuenta atrás" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -166,7 +163,23 @@
       <option name="project" value="LOCAL" />
       <updated>1705600716999</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Cuenta atrás">
+      <option name="closed" value="true" />
+      <created>1705651676682</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1705651676682</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Cuenta atrás">
+      <option name="closed" value="true" />
+      <created>1705651873219</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1705651873219</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -177,9 +190,10 @@
     <MESSAGE value="Tomar foto" />
     <MESSAGE value="Borrado" />
     <MESSAGE value="Toma Imagen" />
-    <option name="LAST_COMMIT_MESSAGE" value="Toma Imagen" />
+    <MESSAGE value="Cuenta atrás" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cuenta atrás" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/SGE_Reconocimiento$main.coverage" NAME="main Coverage Results" MODIFIED="1705600606894" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SGE_Reconocimiento$main.coverage" NAME="main Coverage Results" MODIFIED="1705651803539" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
