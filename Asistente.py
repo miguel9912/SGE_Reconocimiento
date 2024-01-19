@@ -142,13 +142,14 @@ def takePhoto(name):
         return None, False
 
     # Intenta establecer una tasa de fotogramas más alta
-    cap.set(cv2.CAP_PROP_FPS, 120)  # Ajusta a 30 FPS, puedes experimentar con otros valores
+    cap.set(cv2.CAP_PROP_FPS, 30)  # Ajusta a 30 FPS, puedes experimentar con otros valores
 
     # Muestra la vista previa de la cámara
     talk("Preparándose para tomar la foto. Por favor, sonríe.")
 
     # Crea una ventana para mostrar la vista previa
     cv2.namedWindow('Reconocimiento Facial', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('Reconocimiento Facial', 640, 480)
 
     # Inicia un bucle para mostrar la transmisión en tiempo real durante la cuenta atrás
     for i in range(4, 0, -1):
