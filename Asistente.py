@@ -5,15 +5,12 @@ import pywhatkit
 import webbrowser
 import datetime
 import time
-
-from Persona import Persona
-
-
-usuarios = list()
-
-# Escuchar micro y devolver audio como texto
+import json
+from PIL import Image
 import time
-
+from Persona import Persona
+import os
+usuarios = list()
 
 def audio_to_text(timeout=10):
     # Recognizer
@@ -50,8 +47,6 @@ def audio_to_text(timeout=10):
         return 'Esperando'
 
 
-# Resto del código...
-
 
 def talk(msg):
     newVoiceRate = 160
@@ -62,18 +57,10 @@ def talk(msg):
     engine.runAndWait()
 
 
-
-
-
-
 def print_voices():
     engine = pyttsx3.init()
     for voz in engine.getProperty('voices'):
         print(voz.id, voz)
-
-
-
-
 
 def saludo():
 
@@ -99,20 +86,27 @@ def registro():
         return None
 
     print(name)
-    talk('Ahora vamos a tomarte una foto no te muevas por favor.')
-    photo, result = takePhoto(name)
+    ruta_imagen, result = takePhoto(name)
 
     if result:
-        newUser = Persona(name, photo)
+        newUser = Persona(name, ruta_imagen)
         usuarios.append(newUser)
         mensaje = f'{name} registrado exitosamente.'
         talk(mensaje)
-        return newUser
+        return newUser  # Devolver la nueva persona creada
     else:
         talk('El registro no ha podido realizarse correctamente.')
+        return None
 
 
 def takePhoto(name):
+    # Directorio donde se guardarán las imágenes
+    directorio_imagenes = "caras"
+
+    # Crea el directorio si no existe
+    if not os.path.exists(directorio_imagenes):
+        os.makedirs(directorio_imagenes)
+
     # Abre la cámara
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
@@ -149,12 +143,15 @@ def takePhoto(name):
     # Captura un solo fotograma después de la cuenta atrás
     ret, frame = cap.read()
     if ret:
-        # Guarda la foto
-        cv2.imwrite(f"{name}.jpg", frame)
-        talk(f"Foto capturada y guardada como '{name}.jpg'")
+        # Construir la ruta de la imagen
+        ruta_imagen = os.path.join(directorio_imagenes, f"{name}.jpg")
+
+        # Guarda la foto en el directorio 'caras'
+        cv2.imwrite(ruta_imagen, frame)
+
         # Libera la cámara
         cap.release()
-        return frame, True
+        return ruta_imagen, True
     else:
         talk("Error al capturar la foto.")
         # Libera la cámara
@@ -169,6 +166,8 @@ def comprobarRegistro():
         if p.name == name:
             found = True
     return found
+
+
 
 def showUsers():
     for persona in usuarios:
@@ -186,10 +185,16 @@ def requests():
             talk('Abriendo youtube')
             webbrowser.open('https://www.youtube.com')
         elif 'salir' in request:
-            talk('Hasta luégo bombón')
+            talk('Hasta luego bombón')
+            # Guardar la información antes de salir
+            guardar_datos_personas(usuarios)
             exit()
         elif 'registrarse' in request:
-            registro()
+            nueva_persona = registro()
+            if nueva_persona:
+                usuarios.append(nueva_persona)
+                # Guardar la información después de registrar
+                guardar_datos_personas(usuarios)
         elif 'comprobar registro' in request:
             if comprobarRegistro():
                 talk('El usuario está registrado en el sistema')
