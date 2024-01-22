@@ -1,3 +1,4 @@
+
 import os
 import cv2
 import pyttsx3
@@ -87,22 +88,19 @@ def guardar_datos_personas(personas):
 
 
 def cargar_datos_personas():
-    if not usuarios:  # Solo cargar si la lista de usuarios está vacía
-        try:
-            with open('datos_personas.json', 'r') as json_file:
-                data = json.load(json_file)
-                dict_instances = data.get('Personas', {})
-                personas = []
+    try:
+        with open('datos_personas.json', 'r') as json_file:
+            data = json.load(json_file)
+            dict_instances = data.get('Personas', {})
+            personas = []
 
-                for name, persona_data in dict_instances.items():
-                    nueva_persona = Persona(name, persona_data['image'])
-                    personas.append(nueva_persona)
+            for name, persona_data in dict_instances.items():
+                nueva_persona = Persona(name, persona_data['image'])
+                personas.append(nueva_persona)
 
-                return personas
-        except FileNotFoundError:
-            return []
-
-    return usuarios
+            return personas
+    except FileNotFoundError:
+        return []
 
 
 def registro():
@@ -199,9 +197,6 @@ def showUsers():
 
 
 def requests():
-    # Cargar los datos de los usuarios al inicio
-    usuarios.extend(cargar_datos_personas())
-
     saludo()
     stop = False
     while not stop:
@@ -212,7 +207,6 @@ def requests():
             talk('Abriendo youtube')
             webbrowser.open('https://www.youtube.com')
         elif 'salir' in request:
-            talk('SUUUUUUUU')
             talk('Hasta luego bombón')
             guardar_datos_personas(usuarios)
             exit()
@@ -231,7 +225,6 @@ def requests():
             talk('Estos son los usuarios registrados:')
             for persona in usuarios:
                 talk(persona.name)
-
 
 
 
