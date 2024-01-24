@@ -1,29 +1,17 @@
-import datetime
-import json
-import os
-import time
-import webbrowser
-import numpy as np
-import cap
 import cv2
 import pyttsx3
 import speech_recognition as sr
+import webbrowser
+import datetime
+import time
+import json
+from PIL import Image
+import time
 
 from FacialRecognition import FacialRecognition
 from Persona import Persona
-
+import os
 usuarios = list()
-
-
-
-
-def talk(msg):
-    newVoiceRate = 160
-
-    engine = pyttsx3.init()
-    engine.setProperty('rate', newVoiceRate)
-    engine.say(msg)
-    engine.runAndWait()
 
 def audio_to_text(timeout=10):
     # Recognizer
@@ -60,19 +48,14 @@ def audio_to_text(timeout=10):
         return 'Esperando'
 
 
-def cargar_imagenes_cara(carpeta_caras):
-    imagenes = []
-    nombres = []
 
-    for nombre_archivo in os.listdir(carpeta_caras):
-        ruta_completa = os.path.join(carpeta_caras, nombre_archivo)
-        if os.path.isfile(ruta_completa) and nombre_archivo.lower().endswith(('.png', '.jpg', '.jpeg')):
-            imagenes.append(cv2.imread(ruta_completa, cv2.IMREAD_GRAYSCALE))
-            nombres.append(os.path.splitext(nombre_archivo)[0])  # Elimina la extensión (.jpg, .png, etc.)
+def talk(msg):
+    newVoiceRate = 160
 
-    return imagenes, nombres
-
-
+    engine = pyttsx3.init()
+    engine.setProperty('rate', newVoiceRate)
+    engine.say(msg)
+    engine.runAndWait()
 
 
 def print_voices():
@@ -97,14 +80,16 @@ def saludo():
 def guardar_datos_personas(personas):
     dict_instances = {}
     for persona in personas:
-        dict_instances[persona.name] = persona.to_dict()
-        dict_instances[persona.image] = persona.to_dict()
+        # Convierte la imagen de numpy.ndarray a una tupla hashable
+        image_key = tuple(persona.image.flatten())
+        dict_instances[persona.name] = {'image': image_key, **persona.to_dict()}
 
     result = {'Persona': dict_instances}
 
     with open('datos_personas.json', 'w') as json_file:
         json.dump(result, json_file, indent=2)
     talk('Datos de personas guardados exitosamente.')
+
 
 def cargar_datos_personas():
     try:
@@ -145,7 +130,6 @@ def registro():
         return None
 
 
-
 def takePhoto(name):
     # Abre la cámara
     cap = cv2.VideoCapture(0)
@@ -163,7 +147,7 @@ def takePhoto(name):
     cv2.namedWindow('Reconocimiento Facial', cv2.WINDOW_NORMAL)
 
     # Inicia un bucle para mostrar la transmisión en tiempo real durante la cuenta atrás
-    for i in range(4, 0, -1):
+    for i in range(3, 0, -1):
         # Captura un fotograma
         ret, frame = cap.read()
         if not ret:
@@ -174,7 +158,6 @@ def takePhoto(name):
         cv2.imshow('Reconocimiento Facial', frame)
 
         # Espera 1 segundo entre cada cuenta regresiva
-        time.sleep(1)
         talk(str(i))
 
     # Cierra la ventana de vista previa
@@ -235,6 +218,11 @@ def requests():
                 talk('El usuario está registrado en el sistema')
             else:
                 talk('El usuario no está registrado en el sistema')
+        elif 'listar usuarios' in request:
+            showUsers()
+            talk('Estos son los usuarios registrados:')
+            for persona in usuarios:
+                talk(persona.name)
         elif 'iniciar sesión' in request:
             folder_path = 'C:\\Users\\Alumno\\Desktop\\SGE_Reconocimiento\\caras'
             facial_recognition = FacialRecognition()
@@ -243,11 +231,6 @@ def requests():
                 talk(f"Bienvenido, {nombre_encontrado}!")
             else:
                 talk("No se encontró ninguna coincidencia con los usuarios registrados.")
-        elif 'listar usuarios' in request:
-            showUsers()
-            talk('Estos son los usuarios registrados:')
-            for persona in usuarios:
-                talk(persona.name)
 
 
 
