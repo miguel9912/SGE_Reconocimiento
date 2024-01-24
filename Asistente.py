@@ -1,25 +1,37 @@
-
+import datetime
+import json
 import os
+import time
+import webbrowser
+import numpy as np
+import cap
 import cv2
 import pyttsx3
 import speech_recognition as sr
-import pywhatkit
-import webbrowser
-import datetime
-import time
-import json
+
+from FacialRecognition import FacialRecognition
 from Persona import Persona
 
 usuarios = list()
 
 
+
+
+def talk(msg):
+    newVoiceRate = 160
+
+    engine = pyttsx3.init()
+    engine.setProperty('rate', newVoiceRate)
+    engine.say(msg)
+    engine.runAndWait()
+
 def audio_to_text(timeout=10):
     # Recognizer
     r = sr.Recognizer()
 
-    # Configurar el micrófono
+    # Configurar el micro
     with sr.Microphone() as origen:
-        # Tiempo de espera desde que se activa el micrófono
+        # Tiempo de espera desde que se activa el micro
         r.pause_threshold = 0.5
 
         # Informar que comenzó la grabación
@@ -30,7 +42,7 @@ def audio_to_text(timeout=10):
         while time.time() - start_time < timeout:
             audio = r.listen(origen)
             try:
-                # Buscar en Google lo escuchado
+                # Buscar en google lo escuchado
                 text = r.recognize_google(audio, language='es-es')
                 print(text)
                 return text.lower()
@@ -48,13 +60,19 @@ def audio_to_text(timeout=10):
         return 'Esperando'
 
 
-def talk(msg):
-    newVoiceRate = 160
+def cargar_imagenes_cara(carpeta_caras):
+    imagenes = []
+    nombres = []
 
-    engine = pyttsx3.init()
-    engine.setProperty('rate', newVoiceRate)
-    engine.say(msg)
-    engine.runAndWait()
+    for nombre_archivo in os.listdir(carpeta_caras):
+        ruta_completa = os.path.join(carpeta_caras, nombre_archivo)
+        if os.path.isfile(ruta_completa) and nombre_archivo.lower().endswith(('.png', '.jpg', '.jpeg')):
+            imagenes.append(cv2.imread(ruta_completa, cv2.IMREAD_GRAYSCALE))
+            nombres.append(os.path.splitext(nombre_archivo)[0])  # Elimina la extensión (.jpg, .png, etc.)
+
+    return imagenes, nombres
+
+
 
 
 def print_voices():
@@ -62,8 +80,8 @@ def print_voices():
     for voz in engine.getProperty('voices'):
         print(voz.id, voz)
 
-
 def saludo():
+
     hour = datetime.datetime.now()
     if hour.hour < 6 or hour.hour > 20:
         momento = 'Buenas noches.'
@@ -75,23 +93,24 @@ def saludo():
     talk(f'{momento} Soy el bicho, tu asistente personal.')
 
 
+
 def guardar_datos_personas(personas):
     dict_instances = {}
     for persona in personas:
         dict_instances[persona.name] = persona.to_dict()
+        dict_instances[persona.image] = persona.to_dict()
 
-    result = {'Personas': dict_instances}
+    result = {'Persona': dict_instances}
 
     with open('datos_personas.json', 'w') as json_file:
         json.dump(result, json_file, indent=2)
     talk('Datos de personas guardados exitosamente.')
 
-
 def cargar_datos_personas():
     try:
         with open('datos_personas.json', 'r') as json_file:
             data = json.load(json_file)
-            dict_instances = data.get('Personas', {})
+            dict_instances = data.get('Persona', {})  # Utilizar la clave 'Persona'
             personas = []
 
             for name, persona_data in dict_instances.items():
@@ -101,7 +120,6 @@ def cargar_datos_personas():
             return personas
     except FileNotFoundError:
         return []
-
 
 def registro():
     talk('Dime tu nombre, por favor.')
@@ -121,17 +139,14 @@ def registro():
         usuarios.append(newUser)
         mensaje = f'{name} registrado exitosamente.'
         talk(mensaje)
-        return newUser
+        return newUser  # Devolver la nueva persona creada
     else:
         talk('El registro no ha podido realizarse correctamente.')
         return None
 
 
-def takePhoto(name):
-    # Crear la carpeta "caras" si no existe
-    if not os.path.exists("caras"):
-        os.makedirs("caras")
 
+def takePhoto(name):
     # Abre la cámara
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
@@ -139,7 +154,7 @@ def takePhoto(name):
         return None, False
 
     # Intenta establecer una tasa de fotogramas más alta
-    cap.set(cv2.CAP_PROP_FPS, 120)
+    cap.set(cv2.CAP_PROP_FPS, 120)  # Ajusta a 30 FPS, puedes experimentar con otros valores
 
     # Muestra la vista previa de la cámara
     talk("Preparándose para tomar la foto. Por favor, sonríe.")
@@ -168,9 +183,9 @@ def takePhoto(name):
     # Captura un solo fotograma después de la cuenta atrás
     ret, frame = cap.read()
     if ret:
-        # Guarda la foto en la carpeta "caras"
-        cv2.imwrite(os.path.join("caras", f"{name}.jpg"), frame)
-        talk(f"Foto capturada y guardada como 'caras/{name}.jpg'")
+        # Guarda la foto
+        cv2.imwrite(f"{name}.jpg", frame)
+        talk(f"Foto capturada y guardada como '{name}.jpg'")
         # Libera la cámara
         cap.release()
         return frame, True
@@ -180,16 +195,14 @@ def takePhoto(name):
         cap.release()
         return None, False
 
-
 def comprobarRegistro():
-    talk('¿Qué usuario deseas comprobar?')
+    talk('¿Que usuario deseas comprobar?')
     name = audio_to_text().lower()
     found = False
     for p in usuarios:
         if p.name == name:
             found = True
     return found
-
 
 def showUsers():
     for persona in usuarios:
@@ -208,18 +221,28 @@ def requests():
             webbrowser.open('https://www.youtube.com')
         elif 'salir' in request:
             talk('Hasta luego bombón')
+            # Guardar la información antes de salir
             guardar_datos_personas(usuarios)
             exit()
         elif 'registrarse' in request:
             nueva_persona = registro()
             if nueva_persona:
                 usuarios.append(nueva_persona)
+                # Guardar la información después de registrar
                 guardar_datos_personas(usuarios)
         elif 'comprobar registro' in request:
             if comprobarRegistro():
                 talk('El usuario está registrado en el sistema')
             else:
                 talk('El usuario no está registrado en el sistema')
+        elif 'iniciar sesión' in request:
+            folder_path = 'C:\\Users\\Alumno\\Desktop\\SGE_Reconocimiento\\caras'
+            facial_recognition = FacialRecognition()
+            reconocido, nombre_encontrado = facial_recognition.run(folder_path)
+            if reconocido:
+                talk(f"Bienvenido, {nombre_encontrado}!")
+            else:
+                talk("No se encontró ninguna coincidencia con los usuarios registrados.")
         elif 'listar usuarios' in request:
             showUsers()
             talk('Estos son los usuarios registrados:')
