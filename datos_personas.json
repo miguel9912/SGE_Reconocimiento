@@ -3,6 +3,10 @@
     "miguel": {
       "name": "miguel",
       "image": "miguel.jpg"
+    },
+    "ram\u00f3n": {
+      "name": "ram\u00f3n",
+      "image": "ram\u00f3n.jpg"
     }
   }
 }
