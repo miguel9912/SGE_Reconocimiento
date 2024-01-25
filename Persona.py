@@ -1,7 +1,11 @@
+import unidecode
+
+
 class Persona:
-    def __init__(self, name, image):
-        self.name = name
-        self.image = image
+    def __init__(self, name, image_path):
+        # Asegura que el nombre no tenga tildes, esté en minúsculas y no tenga espacios
+        self.name = unidecode.unidecode(name.lower().replace(" ", ""))
+        self.image_path = image_path
 
     def __get_name__(self):
         return f"{self.name}"

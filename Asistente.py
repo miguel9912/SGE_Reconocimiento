@@ -6,7 +6,6 @@ import webbrowser
 import datetime
 import time
 import json
-
 from FacialRecognition import FacialRecognition
 from Persona import Persona
 
@@ -72,7 +71,7 @@ def saludo():
     else:
         momento = 'Buenas tardes.'
 
-    talk(f'{momento} Soy el bicho, tu asistente personal.')
+    talk(f'{momento} gei.')
 
 
 def guardar_datos_personas(personas):
@@ -228,13 +227,9 @@ def requests():
             else:
                 talk('El usuario no está registrado en el sistema')
         elif 'iniciar sesión' in request:
-            folder_path = 'C:\\Users\\Alumno\\Desktop\\SGE_Reconocimiento\\caras'
-            facial_recognition = FacialRecognition()
-            reconocido, nombre_encontrado = facial_recognition.run(folder_path)
-            if reconocido:
-                talk(f"Bienvenido, {nombre_encontrado}!")
-            else:
-                talk("No se encontró ninguna coincidencia con los usuarios registrados.")
+            folder_path = 'caras'
+            facial_recognition = FacialRecognition(folder_path)
+            facial_recognition.run()
         elif 'listar usuarios' in request:
             showUsers()
             talk('Estos son los usuarios registrados:')
