@@ -4,7 +4,7 @@ import face_recognition as fr
 import unidecode
 
 class FacialRecognition:
-    def _init_(self, folder_path):
+    def __init__(self, folder_path):
         self.caras_folder = Path(folder_path)
         self.cod_faces = []
         self.names = []
