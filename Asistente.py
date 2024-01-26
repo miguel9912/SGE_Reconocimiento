@@ -19,14 +19,11 @@ def audio_to_text(timeout=10):
 
     # Configurar el micro
     with sr.Microphone() as origen:
-        # Tiempo de espera desde que se activa el micro
         r.pause_threshold = 0.5
 
-        # Informar que comenzó la grabación
         print('Puedes comenzar a hablar')
         start_time = time.time()
 
-        # Guardar audio
         while time.time() - start_time < timeout:
             audio = r.listen(origen)
             try:
@@ -110,17 +107,17 @@ def registro():
         return None
 
     print(name)
-    talk('Ahora vamos a tomarte una foto no te muevas por favor.')
-    photo, result = takePhoto(name)
+    ruta_imagen, result = takePhoto(name)
 
     if result:
-        newUser = Persona(name, photo)
+        newUser = Persona(name, ruta_imagen)
         usuarios.append(newUser)
         mensaje = f'{name} registrado exitosamente.'
         talk(mensaje)
-        return newUser
+        return newUser  # Devolver la nueva persona creada
     else:
         talk('El registro no ha podido realizarse correctamente.')
+        return None
 #############################################
 
 
@@ -142,14 +139,13 @@ def takePhoto(name):
         return None, False
 
     # Intenta establecer una tasa de fotogramas más alta
-    cap.set(cv2.CAP_PROP_FPS, 30)  # Ajusta a 30 FPS, puedes experimentar con otros valores
+    cap.set(cv2.CAP_PROP_FPS, 120)  # Ajusta a 30 FPS, puedes experimentar con otros valores
 
     # Muestra la vista previa de la cámara
     talk("Preparándose para tomar la foto. Por favor, sonríe.")
 
     # Crea una ventana para mostrar la vista previa
     cv2.namedWindow('Reconocimiento Facial', cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('Reconocimiento Facial', 640, 480)
 
     # Inicia un bucle para mostrar la transmisión en tiempo real durante la cuenta atrás
     for i in range(4, 0, -1):
@@ -163,7 +159,7 @@ def takePhoto(name):
         cv2.imshow('Reconocimiento Facial', frame)
 
         # Espera 1 segundo entre cada cuenta regresiva
-        time.sleep(250)
+        time.sleep(1)
         talk(str(i))
 
     # Cierra la ventana de vista previa
@@ -232,8 +228,20 @@ def requests():
         talk('¿Qué deseas hacer?')
         request = audio_to_text().lower()
         print(request)
-        if 'registrarse' in request:
-            registro()
+        if 'abrir youtube' in request:
+            talk('Abriendo youtube')
+            webbrowser.open('https://www.youtube.com')
+        elif 'salir' in request:
+            talk('Hasta luego bombón')
+            # Guardar la información antes de salir
+            guardar_datos_personas(usuarios)
+            exit()
+        elif 'registrarse' in request:
+            nueva_persona = registro()
+            if nueva_persona:
+                usuarios.append(nueva_persona)
+                # Guardar la información después de registrar
+                guardar_datos_personas(usuarios)
         elif 'comprobar registro' in request:
             if comprobarRegistro():
                 talk('El usuario está registrado en el sistema')
@@ -241,9 +249,40 @@ def requests():
                 talk('El usuario no está registrado en el sistema')
         elif 'listar usuarios' in request:
             showUsers()
-        elif 'salir' in request:
-            talk('Hasta luégo bombón')
-            exit()
+            talk('Estos son los usuarios registrados:')
+            for persona in usuarios:
+                talk(persona.name)
 ############################################
+
+
+
+
+def guardar_datos_personas(personas):
+    dict_instances = {}
+    for persona in personas:
+        dict_instances[persona.name] = persona.to_dict()
+        dict_instances[persona.image] = persona.to_dict()
+
+    result = {'Persona': dict_instances}
+
+    with open('datos_personas.json', 'w') as json_file:
+        json.dump(result, json_file, indent=2)
+    print('Datos de personas guardados exitosamente.')
+
+def cargar_datos_personas():
+    try:
+        with open('datos_personas.json', 'r') as json_file:
+            data = json.load(json_file)
+            dict_instances = data.get('Persona', {})  # Utilizar la clave 'Persona'
+            personas = []
+
+            for name, persona_data in dict_instances.items():
+                nueva_persona = Persona(name, persona_data['image'])
+                personas.append(nueva_persona)
+
+            return personas
+    except FileNotFoundError:
+        return []
+
 
 
