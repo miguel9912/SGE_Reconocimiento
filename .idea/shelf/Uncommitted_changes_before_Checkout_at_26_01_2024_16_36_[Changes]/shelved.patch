@@ -1,0 +1,519 @@
+Index: Asistente.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import cv2\r\nimport pyttsx3\r\nimport speech_recognition as sr\r\nimport webbrowser\r\nimport datetime\r\nimport time\r\n\r\nfrom Persona import Persona\r\n\r\n\r\nusuarios = list()\r\n\r\n#########################################################\r\n################ CONVERTIR AUDIO A TEXTO ################\r\n#########################################################\r\ndef audio_to_text(timeout=10):\r\n    # Recognizer\r\n    r = sr.Recognizer()\r\n\r\n    # Configurar el micro\r\n    with sr.Microphone() as origen:\r\n        # Tiempo de espera desde que se activa el micro\r\n        r.pause_threshold = 0.5\r\n\r\n        # Informar que comenzó la grabación\r\n        print('Puedes comenzar a hablar')\r\n        start_time = time.time()\r\n\r\n        # Guardar audio\r\n        while time.time() - start_time < timeout:\r\n            audio = r.listen(origen)\r\n            try:\r\n                # Buscar en google lo escuchado\r\n                text = r.recognize_google(audio, language='es-es')\r\n                print(text)\r\n                return text.lower()\r\n            except sr.UnknownValueError:\r\n                print('Ups, no entendí lo que dijiste')\r\n                return 'Esperando'\r\n            except sr.RequestError:\r\n                print('Ups, sin servicio')\r\n                return 'Esperando'\r\n            except Exception as e:\r\n                print(f'Ups, algo ha salido mal: {e}')\r\n                return 'Esperando'\r\n\r\n        print('Tiempo de espera agotado')\r\n        return 'Esperando'\r\n#########################################################\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n########################################\r\n################ HABLAR ################\r\n########################################\r\ndef talk(msg):\r\n    newVoiceRate = 160\r\n\r\n    engine = pyttsx3.init()\r\n    engine.setProperty('rate', newVoiceRate)\r\n    engine.say(msg)\r\n    engine.runAndWait()\r\n########################################\r\n\r\n\r\n\r\n\r\n\r\n########################################\r\n################ SALUDO ################\r\n########################################\r\ndef saludo():\r\n\r\n    hour = datetime.datetime.now()\r\n    if hour.hour < 6 or hour.hour > 20:\r\n        momento = 'Buenas noches.'\r\n    elif 6 <= hour.hour < 13:\r\n        momento = 'Buenos días.'\r\n    else:\r\n        momento = 'Buenas tardes.'\r\n\r\n    talk(f'{momento} Soy el bicho, tu asistente personal.')\r\n########################################\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n#############################################\r\n################ REGISTRARSE ################\r\n#############################################\r\ndef registro():\r\n    talk('Dime tu nombre, por favor.')\r\n\r\n    # Establecer un límite de tiempo para la entrada del nombre (10 segundos en este caso)\r\n    name = audio_to_text(timeout=10).lower()\r\n\r\n    if name == 'esperando':\r\n        talk('No se ha podido capturar correctamente tu nombre. Por favor, intenta nuevamente.')\r\n        return None\r\n\r\n    print(name)\r\n    talk('Ahora vamos a tomarte una foto no te muevas por favor.')\r\n    photo, result = takePhoto(name)\r\n\r\n    if result:\r\n        newUser = Persona(name, photo)\r\n        usuarios.append(newUser)\r\n        mensaje = f'{name} registrado exitosamente.'\r\n        talk(mensaje)\r\n        return newUser\r\n    else:\r\n        talk('El registro no ha podido realizarse correctamente.')\r\n#############################################\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n############################################\r\n################ TOMAR FOTO ################\r\n############################################\r\ndef takePhoto(name):\r\n    # Abre la cámara\r\n    cap = cv2.VideoCapture(0)\r\n    if not cap.isOpened():\r\n        talk(\"Error: No se pudo abrir la cámara.\")\r\n        return None, False\r\n\r\n    # Intenta establecer una tasa de fotogramas más alta\r\n    cap.set(cv2.CAP_PROP_FPS, 30)  # Ajusta a 30 FPS, puedes experimentar con otros valores\r\n\r\n    # Muestra la vista previa de la cámara\r\n    talk(\"Preparándose para tomar la foto. Por favor, sonríe.\")\r\n\r\n    # Crea una ventana para mostrar la vista previa\r\n    cv2.namedWindow('Reconocimiento Facial', cv2.WINDOW_NORMAL)\r\n    cv2.resizeWindow('Reconocimiento Facial', 640, 480)\r\n\r\n    # Inicia un bucle para mostrar la transmisión en tiempo real durante la cuenta atrás\r\n    for i in range(4, 0, -1):\r\n        # Captura un fotograma\r\n        ret, frame = cap.read()\r\n        if not ret:\r\n            talk(\"Error al capturar la foto.\")\r\n            break\r\n\r\n        # Muestra la imagen actualizada en la ventana\r\n        cv2.imshow('Reconocimiento Facial', frame)\r\n\r\n        # Espera 1 segundo entre cada cuenta regresiva\r\n        time.sleep(250)\r\n        talk(str(i))\r\n\r\n    # Cierra la ventana de vista previa\r\n    cv2.destroyWindow('Reconocimiento Facial')\r\n\r\n    # Captura un solo fotograma después de la cuenta atrás\r\n    ret, frame = cap.read()\r\n    if ret:\r\n        # Guarda la foto\r\n        cv2.imwrite(f\"{name}.jpg\", frame)\r\n        talk(f\"Foto capturada y guardada como '{name}.jpg'\")\r\n        # Libera la cámara\r\n        cap.release()\r\n        return frame, True\r\n    else:\r\n        talk(\"Error al capturar la foto.\")\r\n        # Libera la cámara\r\n        cap.release()\r\n        return None, False\r\n############################################\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n######################################################\r\n################ COMPROBAR REGISTRARO ################\r\n######################################################\r\ndef comprobarRegistro():\r\n    talk('¿Que usuario deseas comprobar?')\r\n    name = audio_to_text().lower()\r\n    found = False\r\n    for p in usuarios:\r\n        if p.name == name:\r\n            found = True\r\n    return found\r\n######################################################\r\n\r\n\r\n\r\n\r\n\r\n\r\n##################################################\r\n################ MOSTRAR USUARIOS ################\r\n##################################################\r\ndef showUsers():\r\n    for persona in usuarios:\r\n        print(persona.name)\r\n##################################################\r\n\r\n\r\n\r\n\r\n############################################\r\n################ PETICIONES ################\r\n############################################\r\ndef requests():\r\n    saludo()\r\n    stop = False\r\n    while not stop:\r\n        talk('¿Qué deseas hacer?')\r\n        request = audio_to_text().lower()\r\n        print(request)\r\n        if 'registrarse' in request:\r\n            registro()\r\n        elif 'comprobar registro' in request:\r\n            if comprobarRegistro():\r\n                talk('El usuario está registrado en el sistema')\r\n            else:\r\n                talk('El usuario no está registrado en el sistema')\r\n        elif 'listar usuarios' in request:\r\n            showUsers()\r\n        elif 'salir' in request:\r\n            talk('Hasta luégo bombón')\r\n            exit()\r\n############################################\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Asistente.py b/Asistente.py
+--- a/Asistente.py	(revision 23387ea0cc05470ab72100ce744b8598cd8ad7d4)
++++ b/Asistente.py	(date 1706283313583)
+@@ -1,53 +1,45 @@
+-import cv2
+ import pyttsx3
+ import speech_recognition as sr
++
+ import webbrowser
+ import datetime
+-import time
++import wikipedia
+ 
+-from Persona import Persona
++import Persona
+ 
+ 
+-usuarios = list()
+ 
+-#########################################################
+-################ CONVERTIR AUDIO A TEXTO ################
+-#########################################################
+-def audio_to_text(timeout=10):
++
++# Escuchar micro y devolver audio como texto
++def audio_to_text():
+     # Recognizer
+     r = sr.Recognizer()
+ 
+     # Configurar el micro
+     with sr.Microphone() as origen:
+         # Tiempo de espera desde que se activa el micro
+-        r.pause_threshold = 0.5
++        r.pause_threshold = 0.8
+ 
+         # Informar que comenzó la grabación
+         print('Puedes comenzar a hablar')
+-        start_time = time.time()
+-
+         # Guardar audio
+-        while time.time() - start_time < timeout:
+-            audio = r.listen(origen)
+-            try:
+-                # Buscar en google lo escuchado
+-                text = r.recognize_google(audio, language='es-es')
+-                print(text)
+-                return text.lower()
+-            except sr.UnknownValueError:
+-                print('Ups, no entendí lo que dijiste')
+-                return 'Esperando'
+-            except sr.RequestError:
+-                print('Ups, sin servicio')
+-                return 'Esperando'
+-            except Exception as e:
+-                print(f'Ups, algo ha salido mal: {e}')
+-                return 'Esperando'
++        audio = r.listen(origen, )
++        try:
++            # Buscar en google lo escuchado
++            text = r.recognize_google(audio, language='es-es')
++            print(text)
++            return text
++        except sr.UnknownValueError:
++            print('Ups, no entendí lo que dijiste')
++            return 'Esperando'
++
++        except sr.RequestError:
++            print('Ups, sin servicio')
++            return 'Esperando'
+ 
+-        print('Tiempo de espera agotado')
+-        return 'Esperando'
+-#########################################################
+-
++        except:
++            print('Ups, algo ha salido mal')
++            return 'Esperando'
+ 
+ 
+ 
+@@ -55,11 +47,6 @@
+ 
+ 
+ 
+-
+-
+-########################################
+-################ HABLAR ################
+-########################################
+ def talk(msg):
+     newVoiceRate = 160
+ 
+@@ -67,15 +54,21 @@
+     engine.setProperty('rate', newVoiceRate)
+     engine.say(msg)
+     engine.runAndWait()
+-########################################
++
++
++
++
+ 
+ 
++def print_voices():
++    engine = pyttsx3.init()
++    for voz in engine.getProperty('voices'):
++        print(voz.id, voz)
+ 
+ 
+ 
+-########################################
+-################ SALUDO ################
+-########################################
++
++
+ def saludo():
+ 
+     hour = datetime.datetime.now()
+@@ -86,164 +79,35 @@
+     else:
+         momento = 'Buenas tardes.'
+ 
+-    talk(f'{momento} Soy el bicho, tu asistente personal.')
+-########################################
+-
++    talk(f'{momento} Soy el bicho, tu asistente personal. Por favor, dime en qué puedo ayudarte.')
+ 
+ 
+ 
+ 
+ 
+ 
+-
+-#############################################
+-################ REGISTRARSE ################
+-#############################################
+ def registro():
+-    talk('Dime tu nombre, por favor.')
+-
+-    # Establecer un límite de tiempo para la entrada del nombre (10 segundos en este caso)
+-    name = audio_to_text(timeout=10).lower()
+-
+-    if name == 'esperando':
+-        talk('No se ha podido capturar correctamente tu nombre. Por favor, intenta nuevamente.')
+-        return None
+-
+-    print(name)
+-    talk('Ahora vamos a tomarte una foto no te muevas por favor.')
+-    photo, result = takePhoto(name)
+-
+-    if result:
+-        newUser = Persona(name, photo)
+-        usuarios.append(newUser)
+-        mensaje = f'{name} registrado exitosamente.'
+-        talk(mensaje)
+-        return newUser
+-    else:
+-        talk('El registro no ha podido realizarse correctamente.')
+-#############################################
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-############################################
+-################ TOMAR FOTO ################
+-############################################
+-def takePhoto(name):
+-    # Abre la cámara
+-    cap = cv2.VideoCapture(0)
+-    if not cap.isOpened():
+-        talk("Error: No se pudo abrir la cámara.")
+-        return None, False
+-
+-    # Intenta establecer una tasa de fotogramas más alta
+-    cap.set(cv2.CAP_PROP_FPS, 30)  # Ajusta a 30 FPS, puedes experimentar con otros valores
+-
+-    # Muestra la vista previa de la cámara
+-    talk("Preparándose para tomar la foto. Por favor, sonríe.")
+-
+-    # Crea una ventana para mostrar la vista previa
+-    cv2.namedWindow('Reconocimiento Facial', cv2.WINDOW_NORMAL)
+-    cv2.resizeWindow('Reconocimiento Facial', 640, 480)
+-
+-    # Inicia un bucle para mostrar la transmisión en tiempo real durante la cuenta atrás
+-    for i in range(4, 0, -1):
+-        # Captura un fotograma
+-        ret, frame = cap.read()
+-        if not ret:
+-            talk("Error al capturar la foto.")
+-            break
+-
+-        # Muestra la imagen actualizada en la ventana
+-        cv2.imshow('Reconocimiento Facial', frame)
+-
+-        # Espera 1 segundo entre cada cuenta regresiva
+-        time.sleep(250)
+-        talk(str(i))
+-
+-    # Cierra la ventana de vista previa
+-    cv2.destroyWindow('Reconocimiento Facial')
+-
+-    # Captura un solo fotograma después de la cuenta atrás
+-    ret, frame = cap.read()
+-    if ret:
+-        # Guarda la foto
+-        cv2.imwrite(f"{name}.jpg", frame)
+-        talk(f"Foto capturada y guardada como '{name}.jpg'")
+-        # Libera la cámara
+-        cap.release()
+-        return frame, True
+-    else:
+-        talk("Error al capturar la foto.")
+-        # Libera la cámara
+-        cap.release()
+-        return None, False
+-############################################
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-######################################################
+-################ COMPROBAR REGISTRARO ################
+-######################################################
+-def comprobarRegistro():
+-    talk('¿Que usuario deseas comprobar?')
++    talk('Dime tu nombre cariño')
+     name = audio_to_text().lower()
+-    found = False
+-    for p in usuarios:
+-        if p.name == name:
+-            found = True
+-    return found
+-######################################################
+-
+-
+-
++    return Persona(name, "")
+ 
+ 
+ 
+-##################################################
+-################ MOSTRAR USUARIOS ################
+-##################################################
+-def showUsers():
+-    for persona in usuarios:
+-        print(persona.name)
+-##################################################
+-
+-
+-
+-
+-############################################
+-################ PETICIONES ################
+-############################################
+ def requests():
+     saludo()
++
++    print_voices()
+     stop = False
+     while not stop:
+-        talk('¿Qué deseas hacer?')
++        #Activar el micro y guardar la request en un string
+         request = audio_to_text().lower()
+         print(request)
+-        if 'registrarse' in request:
+-            registro()
+-        elif 'comprobar registro' in request:
+-            if comprobarRegistro():
+-                talk('El usuario está registrado en el sistema')
+-            else:
+-                talk('El usuario no está registrado en el sistema')
+-        elif 'listar usuarios' in request:
+-            showUsers()
++        if 'abrir youtube' in request:
++            talk('Abriendo youtube')
++            webbrowser.open('https://www.youtube.com')
+         elif 'salir' in request:
+-            talk('Hasta luégo bombón')
++            talk('Hasta luégo, bombón')
+             exit()
+-############################################
+-
++        elif 'registrarse' in request:
++            registro()
+ 
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"Black\">\r\n    <option name=\"sdkName\" value=\"Python 3.12\" />\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"Python 3.12 (SGE_Reconocimiento) (2)\" project-jdk-type=\"Python SDK\" />\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 23387ea0cc05470ab72100ce744b8598cd8ad7d4)
++++ b/.idea/misc.xml	(date 1706283303063)
+@@ -3,5 +3,5 @@
+   <component name="Black">
+     <option name="sdkName" value="Python 3.12" />
+   </component>
+-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12 (SGE_Reconocimiento) (2)" project-jdk-type="Python SDK" />
++  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.10" project-jdk-type="Python SDK" />
+ </project>
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"a3f0a12a-3167-4b59-ae80-44ba719021a9\" name=\"Changes\" comment=\"Registro con foto\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/Asistente.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/Asistente.py\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Python Script\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"dev\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 4\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2b2FLwVPA3jwW5H55TnlsUcxTSU\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;Python.main.executor&quot;: &quot;Run&quot;,\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;miguel__tarea1&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/Miguel/PycharmProjects/SGE_Reconocimiento&quot;,\r\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,\r\n    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,\r\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\Miguel\\PycharmProjects\\SGE_Reconocimiento\" />\r\n    </key>\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\Miguel\\PycharmProjects\\SGE_Reconocimiento\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\">\r\n    <configuration name=\"main\" type=\"PythonConfigurationType\" factoryName=\"Python\" nameIsGenerated=\"true\">\r\n      <module name=\"SGE_Reconocimiento\" />\r\n      <option name=\"ENV_FILES\" value=\"\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <EXTENSION ID=\"PythonCoverageRunConfigurationExtension\" runner=\"coverage.py\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/main.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n  </component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-python-sdk-50da183f06c8-2887949eec09-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-233.13135.95\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"a3f0a12a-3167-4b59-ae80-44ba719021a9\" name=\"Changes\" comment=\"\" />\r\n      <created>1705405215052</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1705405215052</updated>\r\n      <workItem from=\"1705410644813\" duration=\"502000\" />\r\n      <workItem from=\"1705416073913\" duration=\"748000\" />\r\n      <workItem from=\"1705417232323\" duration=\"44000\" />\r\n      <workItem from=\"1705417813751\" duration=\"2206000\" />\r\n      <workItem from=\"1705500402331\" duration=\"2425000\" />\r\n      <workItem from=\"1705517271818\" duration=\"2524000\" />\r\n      <workItem from=\"1705681194433\" duration=\"1870000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"Camara activada\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1705506946676</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1705506946676</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"Camara activada\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1705506967820</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1705506967820</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"Tomar foto\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1705518803993</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1705518803993</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"Borrado\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1705520626383</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1705520626383</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00005\" summary=\"Borrado\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1705520674433</created>\r\n      <option name=\"number\" value=\"00005\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1705520674433</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00006\" summary=\"Toma Imagen\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1705600707774</created>\r\n      <option name=\"number\" value=\"00006\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00006\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1705600707774</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00007\" summary=\"Toma Imagen\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1705600716999</created>\r\n      <option name=\"number\" value=\"00007\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00007\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1705600716999</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00008\" summary=\"Cuenta atrás\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1705651676682</created>\r\n      <option name=\"number\" value=\"00008\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00008\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1705651676682</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00009\" summary=\"Cuenta atrás\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1705651873219</created>\r\n      <option name=\"number\" value=\"00009\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00009\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1705651873219</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00010\" summary=\"Cuenta atrás\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1705652437601</created>\r\n      <option name=\"number\" value=\"00010\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00010\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1705652437601</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00011\" summary=\"Cuenta atrás2\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1705652498617</created>\r\n      <option name=\"number\" value=\"00011\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00011\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1705652498617</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00012\" summary=\"Cuenta atrás2\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1705652563089</created>\r\n      <option name=\"number\" value=\"00012\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00012\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1705652563089</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00013\" summary=\"Registro con foto\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1705655306828</created>\r\n      <option name=\"number\" value=\"00013\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00013\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1705655306828</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00014\" summary=\"Registro con foto\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1705682302610</created>\r\n      <option name=\"number\" value=\"00014\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00014\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1705682302610</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"15\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"Camara activada\" />\r\n    <MESSAGE value=\"Tomar foto\" />\r\n    <MESSAGE value=\"Borrado\" />\r\n    <MESSAGE value=\"Toma Imagen\" />\r\n    <MESSAGE value=\"Cuenta atrás\" />\r\n    <MESSAGE value=\"Cuenta atrás2\" />\r\n    <MESSAGE value=\"Registro con foto\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Registro con foto\" />\r\n  </component>\r\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\r\n    <SUITE FILE_PATH=\"coverage/SGE_Reconocimiento$main.coverage\" NAME=\"main Coverage Results\" MODIFIED=\"1705682209071\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"coverage.py\" COVERAGE_BY_TEST_ENABLED=\"true\" COVERAGE_TRACING_ENABLED=\"false\" WORKING_DIRECTORY=\"$PROJECT_DIR$\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 23387ea0cc05470ab72100ce744b8598cd8ad7d4)
++++ b/.idea/workspace.xml	(date 1706283320847)
+@@ -4,7 +4,11 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="a3f0a12a-3167-4b59-ae80-44ba719021a9" name="Changes" comment="Registro con foto">
++    <list default="true" id="a3f0a12a-3167-4b59-ae80-44ba719021a9" name="Changes" comment="Cositaassss">
++      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_17_01_2024_20_39__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_17_01_2024_20_39__Changes_.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_17_01_2024_20_39__Changes_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_17_01_2024_20_39__Changes_1.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_17_01_2024_16_30__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_17_01_2024_16_30__Changes_.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/Asistente.py" beforeDir="false" afterPath="$PROJECT_DIR$/Asistente.py" afterDir="false" />
+     </list>
+@@ -39,26 +43,23 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent">{
+-  &quot;keyToString&quot;: {
+-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-    &quot;git-widget-placeholder&quot;: &quot;miguel__tarea1&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Miguel/PycharmProjects/SGE_Reconocimiento&quot;,
+-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "Python.main.executor": "Run",
++    "RunOnceActivity.OpenProjectViewOnStart": "true",
++    "RunOnceActivity.ShowReadmeOnStart": "true",
++    "git-widget-placeholder": "jose__tarea1",
++    "last_opened_file_path": "C:/Users/Miguel/PycharmProjects/python-rec-voz",
++    "node.js.detected.package.eslint": "true",
++    "node.js.detected.package.tslint": "true",
++    "node.js.selected.package.eslint": "(autodetect)",
++    "node.js.selected.package.tslint": "(autodetect)",
++    "nodejs_package_manager_path": "npm",
++    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
++    "vue.rearranger.settings.migration": "true"
+   }
+-}</component>
++}]]></component>
+   <component name="RecentsManager">
+-    <key name="CopyFile.RECENT_KEYS">
+-      <recent name="C:\Users\Miguel\PycharmProjects\SGE_Reconocimiento" />
+-    </key>
+     <key name="MoveFile.RECENT_KEYS">
+       <recent name="C:\Users\Miguel\PycharmProjects\SGE_Reconocimiento" />
+     </key>
+@@ -109,7 +110,6 @@
+       <workItem from="1705417813751" duration="2206000" />
+       <workItem from="1705500402331" duration="2425000" />
+       <workItem from="1705517271818" duration="2524000" />
+-      <workItem from="1705681194433" duration="1870000" />
+     </task>
+     <task id="LOCAL-00001" summary="Camara activada">
+       <option name="closed" value="true" />
+@@ -151,79 +151,23 @@
+       <option name="project" value="LOCAL" />
+       <updated>1705520674433</updated>
+     </task>
+-    <task id="LOCAL-00006" summary="Toma Imagen">
++    <task id="LOCAL-00006" summary="Cositaassss">
+       <option name="closed" value="true" />
+-      <created>1705600707774</created>
++      <created>1705521709292</created>
+       <option name="number" value="00006" />
+       <option name="presentableId" value="LOCAL-00006" />
+       <option name="project" value="LOCAL" />
+-      <updated>1705600707774</updated>
++      <updated>1705521709292</updated>
+     </task>
+-    <task id="LOCAL-00007" summary="Toma Imagen">
++    <task id="LOCAL-00007" summary="Cositaassss">
+       <option name="closed" value="true" />
+-      <created>1705600716999</created>
++      <created>1705521730958</created>
+       <option name="number" value="00007" />
+       <option name="presentableId" value="LOCAL-00007" />
+       <option name="project" value="LOCAL" />
+-      <updated>1705600716999</updated>
+-    </task>
+-    <task id="LOCAL-00008" summary="Cuenta atrás">
+-      <option name="closed" value="true" />
+-      <created>1705651676682</created>
+-      <option name="number" value="00008" />
+-      <option name="presentableId" value="LOCAL-00008" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1705651676682</updated>
+-    </task>
+-    <task id="LOCAL-00009" summary="Cuenta atrás">
+-      <option name="closed" value="true" />
+-      <created>1705651873219</created>
+-      <option name="number" value="00009" />
+-      <option name="presentableId" value="LOCAL-00009" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1705651873219</updated>
+-    </task>
+-    <task id="LOCAL-00010" summary="Cuenta atrás">
+-      <option name="closed" value="true" />
+-      <created>1705652437601</created>
+-      <option name="number" value="00010" />
+-      <option name="presentableId" value="LOCAL-00010" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1705652437601</updated>
+-    </task>
+-    <task id="LOCAL-00011" summary="Cuenta atrás2">
+-      <option name="closed" value="true" />
+-      <created>1705652498617</created>
+-      <option name="number" value="00011" />
+-      <option name="presentableId" value="LOCAL-00011" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1705652498617</updated>
+-    </task>
+-    <task id="LOCAL-00012" summary="Cuenta atrás2">
+-      <option name="closed" value="true" />
+-      <created>1705652563089</created>
+-      <option name="number" value="00012" />
+-      <option name="presentableId" value="LOCAL-00012" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1705652563089</updated>
+-    </task>
+-    <task id="LOCAL-00013" summary="Registro con foto">
+-      <option name="closed" value="true" />
+-      <created>1705655306828</created>
+-      <option name="number" value="00013" />
+-      <option name="presentableId" value="LOCAL-00013" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1705655306828</updated>
+-    </task>
+-    <task id="LOCAL-00014" summary="Registro con foto">
+-      <option name="closed" value="true" />
+-      <created>1705682302610</created>
+-      <option name="number" value="00014" />
+-      <option name="presentableId" value="LOCAL-00014" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1705682302610</updated>
++      <updated>1705521730958</updated>
+     </task>
+-    <option name="localTasksCounter" value="15" />
++    <option name="localTasksCounter" value="8" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -234,7 +178,19 @@
+       <map>
+         <entry key="MAIN">
+           <value>
+-            <State />
++            <State>
++              <option name="FILTERS">
++                <map>
++                  <entry key="branch">
++                    <value>
++                      <list>
++                        <option value="origin/miguel_tarea1" />
++                      </list>
++                    </value>
++                  </entry>
++                </map>
++              </option>
++            </State>
+           </value>
+         </entry>
+       </map>
+@@ -244,13 +200,10 @@
+     <MESSAGE value="Camara activada" />
+     <MESSAGE value="Tomar foto" />
+     <MESSAGE value="Borrado" />
+-    <MESSAGE value="Toma Imagen" />
+-    <MESSAGE value="Cuenta atrás" />
+-    <MESSAGE value="Cuenta atrás2" />
+-    <MESSAGE value="Registro con foto" />
+-    <option name="LAST_COMMIT_MESSAGE" value="Registro con foto" />
++    <MESSAGE value="Cositaassss" />
++    <option name="LAST_COMMIT_MESSAGE" value="Cositaassss" />
+   </component>
+   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+-    <SUITE FILE_PATH="coverage/SGE_Reconocimiento$main.coverage" NAME="main Coverage Results" MODIFIED="1705682209071" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
++    <SUITE FILE_PATH="coverage/SGE_Reconocimiento$main.coverage" NAME="main Coverage Results" MODIFIED="1705521190785" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+   </component>
+ </project>
+\ No newline at end of file
