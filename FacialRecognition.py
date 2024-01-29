@@ -9,6 +9,7 @@ class FacialRecognition:
         self.cod_faces = []
         self.names = []
 
+
     def cargar_imagenes(self):
         self.cod_faces = []
         self.names = []

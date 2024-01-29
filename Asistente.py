@@ -11,7 +11,9 @@ from Persona import Persona
 
 usuarios = list()
 
-
+######################################################################
+######## TRANSFORMAMOS A TEXTO LA INFO RECIBIDA POR MICRÓFONO ########
+######################################################################
 def audio_to_text(timeout=10):
     r = sr.Recognizer()
 
@@ -39,8 +41,14 @@ def audio_to_text(timeout=10):
 
         print('Tiempo de espera agotado')
         return 'Esperando'
+######################################################################
 
 
+
+
+##################################################################
+######## MUESTRA EN AUDIO EL TEXTO RECIBIDO POR PARÁMETRO ########
+##################################################################
 def talk(msg):
     newVoiceRate = 160
 
@@ -48,14 +56,14 @@ def talk(msg):
     engine.setProperty('rate', newVoiceRate)
     engine.say(msg)
     engine.runAndWait()
+##################################################################
 
 
-def print_voices():
-    engine = pyttsx3.init()
-    for voz in engine.getProperty('voices'):
-        print(voz.id, voz)
 
 
+#######################################################
+######## SALUDO EN FUNCIÓN DEL MOMENTO DEL DÍA ########
+#######################################################
 def saludo():
     hour = datetime.datetime.now()
     if hour.hour < 6 or hour.hour > 20:
@@ -66,8 +74,13 @@ def saludo():
         momento = 'Buenas tardes.'
 
     talk(f'{momento}.')
+#######################################################
 
 
+
+####################################################
+######## GUARDAR DATOS RECOGIDOS EN EL JSON ########
+####################################################
 def guardar_datos_personas(personas):
     dict_instances = {}
     for persona in personas:
@@ -78,8 +91,14 @@ def guardar_datos_personas(personas):
     with open('datos_personas.json', 'w') as json_file:
         json.dump(result, json_file, indent=2)
     print('Datos de personas guardados exitosamente.')
+####################################################
 
 
+
+
+####################################################
+######## MOSTRAR DATOS RECOGIDOS EN EL JSON ########
+####################################################
 def cargar_datos_personas():
     if not usuarios:  # Solo cargar si la lista de usuarios está vacía
         try:
@@ -97,8 +116,14 @@ def cargar_datos_personas():
             return []
 
     return usuarios
+####################################################
 
 
+
+
+###########################################################
+######## RECOGIDA DE INFORMACIÓN DEL NUEVO USUARIO ########
+###########################################################
 def registro():
     talk('Dime tu nombre por favor.')
     name = audio_to_text(timeout=10).lower()
@@ -120,8 +145,6 @@ def registro():
         phone = audio_to_text(timeout=10).lower()
         phone = phone.replace(" ", "")
 
-
-
     if result:
         newUser = Persona(name, ruta_imagen, phone)
         usuarios.append(newUser)
@@ -131,7 +154,13 @@ def registro():
     else:
         talk('El registro no ha podido realizarse correctamente.')
         return None
+###########################################################
 
+
+
+################################
+######## TOMAMOS IMAGEN ########
+################################
 def takePhoto(name):
     # Crear la carpeta "caras" si no existe
     if not os.path.exists("caras"):
@@ -181,8 +210,13 @@ def takePhoto(name):
         cap.release()
         cv2.destroyAllWindows()
         return None, False
+##############################
 
 
+
+#################################################
+######## COMPROBAR USUARIO EN EL SISTEMA ########
+#################################################
 def comprobarRegistro():
     talk('¿Qué usuario deseas comprobar?')
     name = audio_to_text().lower()
@@ -191,13 +225,30 @@ def comprobarRegistro():
         if p.name == name:
             found = True
     return found
+#################################################
 
 
+
+
+
+
+##################################
+######## MOSTRAR USUARIOS ########
+##################################
 def showUsers():
     for persona in usuarios:
         print(persona.name)
+##################################
 
 
+
+
+
+
+
+##################################
+######## MÉTODO PRINCIPAL ########
+##################################
 def requests():
     # Cargar los datos de los usuarios al inicio
     usuarios.extend(cargar_datos_personas())
@@ -205,6 +256,7 @@ def requests():
     saludo()
     stop = False
     while not stop:
+
         if not logged:
             talk('¿Qué deseas hacer?')
             talk('¿Deseas iniciar sesión, registrarte o salir ?')
@@ -213,12 +265,14 @@ def requests():
                 talk('Hasta luego bombón')
                 guardar_datos_personas(usuarios)
                 stop = True
+
             elif ('registrarse' or 'registrarme') in request:
                 nueva_persona = registro()
                 if nueva_persona:
                     usuarios.append(nueva_persona)
                     guardar_datos_personas(usuarios)
                     logged = True
+
             elif 'iniciar sesión' in request:
                 folder_path = 'caras'
                 facial_recognition = FacialRecognition(folder_path)
@@ -230,15 +284,21 @@ def requests():
                 else:
                     logged = False
 
+            elif ('repetir' or 'repite') in request:
+                pass
+
+
         else:
             talk('¿Qué deseas hacer?')
             talk('¿Deseas comprobar algún regístro en concreto, listar usuarios, cerrar sesión o salir?')
             request = audio_to_text().lower()
+
             if 'comprobar registro' in request:
                 if comprobarRegistro():
                     talk('El usuario está registrado en el sistema')
                 else:
                     talk('El usuario no está registrado en el sistema')
+
             elif ('listar usuarios' or 'lista los usuarios' or 'listar los usuarios') in request:
                 showUsers()
                 talk('Estos son los usuarios registrados:')
@@ -247,9 +307,13 @@ def requests():
             elif 'cerrar sesión' in request:
                 talk('Hasta la próxima')
                 logged = False
+
             elif 'salir' in request:
                 talk('Hasta luego bombón')
                 guardar_datos_personas(usuarios)
                 stop = True
+
             elif ('repetir' or 'repite') in request:
                 pass
+
+##################################
