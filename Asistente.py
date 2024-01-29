@@ -111,9 +111,15 @@ def registro():
 
     talk('Por último indica tu número de teléfono por favor.')
     phone = audio_to_text(timeout=10).lower()
-    while phone == 'esperando':
-        talk('No se ha podido capturar correctamente tu teléfono. Por favor, intenta nuevamente.')
+    phone = phone.replace(" ","")
+    while phone == 'esperando' or not phone.isdigit():
+        if phone == 'esperando':
+            talk('No se ha podido capturar correctamente tu teléfono. Por favor, intenta nuevamente.')
+        elif not phone.isdigit():
+            talk('El teéfono solo puede contener números')
         phone = audio_to_text(timeout=10).lower()
+        phone = phone.replace(" ", "")
+
 
 
     if result:
