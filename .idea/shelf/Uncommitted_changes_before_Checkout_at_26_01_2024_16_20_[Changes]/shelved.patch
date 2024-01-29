@@ -1,0 +1,17 @@
+Index: FacialRecognition.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from pathlib import Path\r\nimport cv2\r\nimport face_recognition as fr\r\n\r\nclass FacialRecognition:\r\n    def __init__(self, folder_path):\r\n        self.fotos_list = []\r\n        self.locations = []\r\n        self.cod_faces = []\r\n        self.results = []\r\n        self.cara_control = None  # Variable para almacenar la cara de control\r\n        self.caras_folder = Path(folder_path)\r\n\r\n    def cargar_imagenes(self):\r\n        paths = [str(file) for file in self.caras_folder.glob('*.jpg')]\r\n        self.fotos_list = [fr.load_image_file(path) for path in paths]\r\n\r\n    def asignar_perfil_color(self):\r\n        self.fotos_list = [cv2.cvtColor(f, cv2.COLOR_BGR2RGB) for f in self.fotos_list]\r\n\r\n    def localizar_cara(self):\r\n        self.locations = [fr.face_locations(f)[0] for f in self.fotos_list]\r\n\r\n    def get_cod_faces(self):\r\n        self.cod_faces = [fr.face_encodings(f)[0] for f in self.fotos_list]\r\n\r\n    def draw_rectangles(self):\r\n        for (f, l) in zip(self.fotos_list, self.locations):\r\n            cv2.rectangle(f,\r\n                          (l[3], l[0]),\r\n                          (l[1], l[2]),\r\n                          (0, 255, 0), 2)\r\n\r\n    def show_imgs(self):\r\n        for index, f in enumerate(self.fotos_list):\r\n            cv2.imshow(f'Foto {index}', f)\r\n\r\n    def compare_all_with_control(self):\r\n        results = []\r\n        for i, fc in enumerate(self.cod_faces):\r\n            if i > 0:\r\n                diferencias = {'misma_cara': fr.compare_faces([self.cara_control], fc),\r\n                               'distancia': fr.face_distance([self.cara_control], fc)}\r\n            elif i == 0:\r\n                diferencias = {'misma_cara': 'control',\r\n                               'distancia': '0'}\r\n            results.append(diferencias)\r\n\r\n        self.results = results\r\n\r\n    def show_results(self):\r\n        for d, f in zip(self.results, self.fotos_list):\r\n            resultado = d['misma_cara']\r\n            distancia = d['distancia'][0]\r\n            cv2.putText(f, f'{resultado} :::: {distancia}',\r\n                        (50, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)\r\n\r\n    def run(self):\r\n        cap = cv2.VideoCapture(0)  # Iniciar la captura de video con la cámara del portátil\r\n        ret, self.cara_control = cap.read()  # Capturar la cara de control desde la cámara\r\n        cap.release()  # Liberar la cámara después de capturar la cara de control\r\n\r\n        self.cargar_imagenes()\r\n        self.asignar_perfil_color()\r\n        self.localizar_cara()\r\n        self.get_cod_faces()\r\n        self.draw_rectangles()\r\n        self.compare_all_with_control()  # Comparar con la cara de control\r\n        self.show_results()\r\n        self.show_imgs()\r\n        cv2.waitKey(0)\r\n
+===================================================================
+diff --git a/FacialRecognition.py b/FacialRecognition.py
+--- a/FacialRecognition.py	
++++ b/FacialRecognition.py	
+@@ -8,7 +8,7 @@
+         self.locations = []
+         self.cod_faces = []
+         self.results = []
+-        self.cara_control = None  # Variable para almacenar la cara de control
++        self.cara_control = None
+         self.caras_folder = Path(folder_path)
+ 
+     def cargar_imagenes(self):
