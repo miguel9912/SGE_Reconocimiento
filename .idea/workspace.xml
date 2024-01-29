@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a3f0a12a-3167-4b59-ae80-44ba719021a9" name="Changes" comment="Comentado" />
+    <list default="true" id="a3f0a12a-3167-4b59-ae80-44ba719021a9" name="Changes" comment="Comentado">
+      <change beforePath="$PROJECT_DIR$/haarcascade_frontalface_default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/miguel miguel.jpg" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -41,7 +44,7 @@
     "Python.main.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "miguel__tarea1",
+    "git-widget-placeholder": "DEV",
     "last_opened_file_path": "C:/Users/Miguel/PycharmProjects/SGE_Reconocimiento",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -80,7 +83,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-50da183f06c8-2887949eec09-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-233.13135.95" />
+        <option value="bundled-python-sdk-50da183f06c8-d3b881c8e49f-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-233.13135.95" />
       </set>
     </attachedChunks>
   </component>
