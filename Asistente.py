@@ -2,7 +2,6 @@ import os
 import cv2
 import pyttsx3
 import speech_recognition as sr
-import webbrowser
 import datetime
 import time
 import json
@@ -43,9 +42,6 @@ def audio_to_text(timeout=10):
         return 'Esperando'
 ######################################################################
 
-
-
-
 ##################################################################
 ######## MUESTRA EN AUDIO EL TEXTO RECIBIDO POR PARÁMETRO ########
 ##################################################################
@@ -57,8 +53,6 @@ def talk(msg):
     engine.say(msg)
     engine.runAndWait()
 ##################################################################
-
-
 
 
 #######################################################
@@ -76,8 +70,6 @@ def saludo():
     talk(f'{momento}.')
 #######################################################
 
-
-
 ####################################################
 ######## GUARDAR DATOS RECOGIDOS EN EL JSON ########
 ####################################################
@@ -92,9 +84,6 @@ def guardar_datos_personas(personas):
         json.dump(result, json_file, indent=2)
     print('Datos de personas guardados exitosamente.')
 ####################################################
-
-
-
 
 ####################################################
 ######## MOSTRAR DATOS RECOGIDOS EN EL JSON ########
@@ -117,8 +106,6 @@ def cargar_datos_personas():
 
     return usuarios
 ####################################################
-
-
 
 
 ###########################################################
@@ -155,7 +142,6 @@ def registro():
         talk('El registro no ha podido realizarse correctamente.')
         return None
 ###########################################################
-
 
 
 ################################
@@ -212,8 +198,6 @@ def takePhoto(name):
         return None, False
 ##############################
 
-
-
 #################################################
 ######## COMPROBAR USUARIO EN EL SISTEMA ########
 #################################################
@@ -227,11 +211,6 @@ def comprobarRegistro():
     return found
 #################################################
 
-
-
-
-
-
 ##################################
 ######## MOSTRAR USUARIOS ########
 ##################################
@@ -239,11 +218,6 @@ def showUsers():
     for persona in usuarios:
         print(persona.name)
 ##################################
-
-
-
-
-
 
 
 ##################################

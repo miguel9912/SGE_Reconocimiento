@@ -4,10 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a3f0a12a-3167-4b59-ae80-44ba719021a9" name="Changes" comment="Faltan solo comentarios">
+    <list default="true" id="a3f0a12a-3167-4b59-ae80-44ba719021a9" name="Changes" comment="Camara activada">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_17_01_2024_20_39__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_17_01_2024_20_39__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_01_2024_16_20__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_01_2024_16_20__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_01_2024_16_20__Changes_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_01_2024_16_20__Changes_1.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_01_2024_16_36__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_01_2024_16_36__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_01_2024_16_52__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_01_2024_16_52__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_17_01_2024_16_30_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_22_01_2024_20_39__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_22_01_2024_20_39__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_26_01_2024_16_22__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_26_01_2024_16_22__Changes_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Asistente.py" beforeDir="false" afterPath="$PROJECT_DIR$/Asistente.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FacialRecognition.py" beforeDir="false" afterPath="$PROJECT_DIR$/FacialRecognition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Persona.py" beforeDir="false" afterPath="$PROJECT_DIR$/Persona.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,7 +34,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="miguel_tarea1" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -46,7 +56,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "miguel__tarea1",
-    "last_opened_file_path": "C:/Users/Miguel/PycharmProjects/python-rec-voz",
+    "last_opened_file_path": "C:/Users/Miguel/PycharmProjects/SGE_Reconocimiento",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -56,14 +66,6 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Miguel\PycharmProjects\SGE_Reconocimiento" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Miguel\PycharmProjects\SGE_Reconocimiento" />
-    </key>
-  </component>
   <component name="RunManager">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="SGE_Reconocimiento" />
@@ -109,10 +111,7 @@
       <workItem from="1705417232323" duration="44000" />
       <workItem from="1705417813751" duration="2206000" />
       <workItem from="1705500402331" duration="2425000" />
-      <workItem from="1705517271818" duration="2524000" />
-      <workItem from="1705681194433" duration="1870000" />
-      <workItem from="1706283616106" duration="423000" />
-      <workItem from="1706473111156" duration="7452000" />
+      <workItem from="1705517271818" duration="1507000" />
     </task>
     <task id="LOCAL-00001" summary="Camara activada">
       <option name="closed" value="true" />
@@ -130,165 +129,17 @@
       <option name="project" value="LOCAL" />
       <updated>1705506967820</updated>
     </task>
-    <task id="LOCAL-00003" summary="Tomar foto">
-      <option name="closed" value="true" />
-      <created>1705518803993</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1705518803993</updated>
-    </task>
-    <task id="LOCAL-00004" summary="Borrado">
-      <option name="closed" value="true" />
-      <created>1705520626383</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1705520626383</updated>
-    </task>
-    <task id="LOCAL-00005" summary="Borrado">
-      <option name="closed" value="true" />
-      <created>1705520674433</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1705520674433</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Toma Imagen">
-      <option name="closed" value="true" />
-      <created>1705600707774</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1705600707774</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Toma Imagen">
-      <option name="closed" value="true" />
-      <created>1705600716999</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1705600716999</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Cuenta atrás">
-      <option name="closed" value="true" />
-      <created>1705651676682</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1705651676682</updated>
-    </task>
-    <task id="LOCAL-00009" summary="Cuenta atrás">
-      <option name="closed" value="true" />
-      <created>1705651873219</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1705651873219</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Cuenta atrás">
-      <option name="closed" value="true" />
-      <created>1705652437601</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1705652437601</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Cuenta atrás2">
-      <option name="closed" value="true" />
-      <created>1705652498617</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1705652498617</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Cuenta atrás2">
-      <option name="closed" value="true" />
-      <created>1705652563089</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1705652563089</updated>
-    </task>
-    <task id="LOCAL-00013" summary="Registro con foto">
-      <option name="closed" value="true" />
-      <created>1705655306828</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1705655306828</updated>
-    </task>
-    <task id="LOCAL-00014" summary="Registro con foto">
-      <option name="closed" value="true" />
-      <created>1705682302610</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1705682302610</updated>
-    </task>
-    <task id="LOCAL-00015" summary="cagada corregida">
-      <option name="closed" value="true" />
-      <created>1706284647355</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1706284647355</updated>
-    </task>
-    <task id="LOCAL-00016" summary="cagada corregida">
-      <option name="closed" value="true" />
-      <created>1706284663246</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1706284663246</updated>
-    </task>
-    <task id="LOCAL-00017" summary="No falta casi nada">
-      <option name="closed" value="true" />
-      <created>1706520225437</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1706520225437</updated>
-    </task>
-    <task id="LOCAL-00018" summary="Faltan solo comentarios">
-      <option name="closed" value="true" />
-      <created>1706522058059</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1706522058059</updated>
-    </task>
-    <option name="localTasksCounter" value="19" />
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Camara activada" />
-    <MESSAGE value="Tomar foto" />
-    <MESSAGE value="Borrado" />
-    <MESSAGE value="Toma Imagen" />
-    <MESSAGE value="Cuenta atrás" />
-    <MESSAGE value="Cuenta atrás2" />
-    <MESSAGE value="Registro con foto" />
-    <MESSAGE value="cagada corregida" />
-    <MESSAGE value="No falta casi nada" />
-    <MESSAGE value="Faltan solo comentarios" />
-    <option name="LAST_COMMIT_MESSAGE" value="Faltan solo comentarios" />
+    <option name="LAST_COMMIT_MESSAGE" value="Camara activada" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/SGE_Reconocimiento$main.coverage" NAME="main Coverage Results" MODIFIED="1706522956020" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SGE_Reconocimiento$main.coverage" NAME="main Coverage Results" MODIFIED="1705518551070" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

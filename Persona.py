@@ -1,6 +1,6 @@
 import unidecode
 
-
+#Clase persona donde se guardaran los datos
 class Persona:
     def __init__(self, name, image_path, phone):
         # Asegura que el nombre no tenga tildes, esté en minúsculas y no tenga espacios
