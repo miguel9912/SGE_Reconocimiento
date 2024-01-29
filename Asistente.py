@@ -13,23 +13,17 @@ usuarios = list()
 
 
 def audio_to_text(timeout=10):
-    # Recognizer
     r = sr.Recognizer()
 
-    # Configurar el micrófono
     with sr.Microphone() as origen:
-        # Tiempo de espera desde que se activa el micrófono
         r.pause_threshold = 0.5
 
-        # Informar que comenzó la grabación
         print('Puedes comenzar a hablar')
         start_time = time.time()
 
-        # Guardar audio
         while time.time() - start_time < timeout:
             audio = r.listen(origen)
             try:
-                # Buscar en Google lo escuchado
                 text = r.recognize_google(audio, language='es-es')
                 print(text)
                 return text.lower()
@@ -71,7 +65,7 @@ def saludo():
     else:
         momento = 'Buenas tardes.'
 
-    talk(f'{momento} gei.')
+    talk(f'{momento}.')
 
 
 def guardar_datos_personas(personas):
@@ -83,7 +77,7 @@ def guardar_datos_personas(personas):
 
     with open('datos_personas.json', 'w') as json_file:
         json.dump(result, json_file, indent=2)
-    talk('Datos de personas guardados exitosamente.')
+    print('Datos de personas guardados exitosamente.')
 
 
 def cargar_datos_personas():
@@ -95,7 +89,7 @@ def cargar_datos_personas():
                 personas = []
 
                 for name, persona_data in dict_instances.items():
-                    nueva_persona = Persona(name, persona_data['image'])
+                    nueva_persona = Persona(name, persona_data['image'], persona_data['phone'])
                     personas.append(nueva_persona)
 
                 return personas
@@ -106,20 +100,24 @@ def cargar_datos_personas():
 
 
 def registro():
-    talk('Dime tu nombre, por favor.')
-
-    # Establecer un límite de tiempo para la entrada del nombre (10 segundos en este caso)
+    talk('Dime tu nombre por favor.')
     name = audio_to_text(timeout=10).lower()
 
-    if name == 'esperando':
+    while name == 'esperando':
         talk('No se ha podido capturar correctamente tu nombre. Por favor, intenta nuevamente.')
-        return None
-
-    print(name)
+        name = audio_to_text(timeout=10).lower()
+    talk('A continuación te tomaremos una foto')
     ruta_imagen, result = takePhoto(name)
 
+    talk('Por último indica tu número de teléfono por favor.')
+    phone = audio_to_text(timeout=10).lower()
+    while phone == 'esperando':
+        talk('No se ha podido capturar correctamente tu teléfono. Por favor, intenta nuevamente.')
+        phone = audio_to_text(timeout=10).lower()
+
+
     if result:
-        newUser = Persona(name, ruta_imagen)
+        newUser = Persona(name, ruta_imagen, phone)
         usuarios.append(newUser)
         mensaje = f'{name} registrado exitosamente.'
         talk(mensaje)
@@ -127,7 +125,6 @@ def registro():
     else:
         talk('El registro no ha podido realizarse correctamente.')
         return None
-
 
 def takePhoto(name):
     # Crear la carpeta "caras" si no existe
@@ -137,37 +134,32 @@ def takePhoto(name):
     # Abre la cámara
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
-        talk("Error: No se pudo abrir la cámara.")
+        print("Error: No se pudo abrir la cámara.")
         return None, False
 
     # Intenta establecer una tasa de fotogramas más alta
     cap.set(cv2.CAP_PROP_FPS, 120)
 
-    # Muestra la vista previa de la cámara
     talk("Preparándose para tomar la foto. Por favor, sonríe.")
 
-    # Crea una ventana para mostrar la vista previa
     cv2.namedWindow('Reconocimiento Facial', cv2.WINDOW_NORMAL)
 
-    # Inicia un bucle para mostrar la transmisión en tiempo real durante la cuenta atrás
-    for i in range(4, 0, -1):
-        # Captura un fotograma
-        ret, frame = cap.read()
-        if not ret:
-            talk("Error al capturar la foto.")
-            break
+    ret, frame = cap.read()
+    cv2.imshow('Reconocimiento Facial', frame)
 
-        # Muestra la imagen actualizada en la ventana
-        cv2.imshow('Reconocimiento Facial', frame)
+    if not ret:
+        print("Error al capturar la foto.")
+        cap.release()
+        cv2.destroyAllWindows()
+        return None, False
 
-        # Espera 1 segundo entre cada cuenta regresiva
-        time.sleep(1)
+    for i in range(3, 0, -1):
+        time.sleep(0.250)  # Ajusta el tiempo de espera según tus necesidades
         talk(str(i))
 
     # Cierra la ventana de vista previa
     cv2.destroyWindow('Reconocimiento Facial')
 
-    # Captura un solo fotograma después de la cuenta atrás
     ret, frame = cap.read()
     if ret:
         # Guarda la foto en la carpeta "caras"
@@ -175,11 +167,13 @@ def takePhoto(name):
         talk(f"Foto capturada y guardada como 'caras/{name}.jpg'")
         # Libera la cámara
         cap.release()
+        cv2.destroyAllWindows()
         return frame, True
     else:
-        talk("Error al capturar la foto.")
+        print("Error al capturar la foto.")
         # Libera la cámara
         cap.release()
+        cv2.destroyAllWindows()
         return None, False
 
 
@@ -201,37 +195,55 @@ def showUsers():
 def requests():
     # Cargar los datos de los usuarios al inicio
     usuarios.extend(cargar_datos_personas())
-
+    logged = False
     saludo()
     stop = False
     while not stop:
-        talk('¿Qué deseas hacer?')
-        request = audio_to_text().lower()
-        print(request)
-        if 'abrir youtube' in request:
-            talk('Abriendo youtube')
-            webbrowser.open('https://www.youtube.com')
-        elif 'salir' in request:
-            talk('SUUUUUUUU')
-            talk('Hasta luego bombón')
-            guardar_datos_personas(usuarios)
-            exit()
-        elif 'registrarse' in request:
-            nueva_persona = registro()
-            if nueva_persona:
-                usuarios.append(nueva_persona)
+        if not logged:
+            talk('¿Qué deseas hacer?')
+            talk('¿Deseas iniciar sesión, registrarte o salir ?')
+            request = audio_to_text().lower()
+            if 'salir' in request:
+                talk('Hasta luego bombón')
                 guardar_datos_personas(usuarios)
-        elif 'comprobar registro' in request:
-            if comprobarRegistro():
-                talk('El usuario está registrado en el sistema')
-            else:
-                talk('El usuario no está registrado en el sistema')
-        elif 'iniciar sesión' in request:
-            folder_path = 'caras'
-            facial_recognition = FacialRecognition(folder_path)
-            facial_recognition.run()
-        elif 'listar usuarios' in request:
-            showUsers()
-            talk('Estos son los usuarios registrados:')
-            for persona in usuarios:
-                talk(persona.name)
+                stop = True
+            elif ('registrarse' or 'registrarme') in request:
+                nueva_persona = registro()
+                if nueva_persona:
+                    usuarios.append(nueva_persona)
+                    guardar_datos_personas(usuarios)
+                    logged = True
+            elif 'iniciar sesión' in request:
+                folder_path = 'caras'
+                facial_recognition = FacialRecognition(folder_path)
+                talk('Mira a la cámara por favor')
+                code = facial_recognition.run()
+                talk(code)
+                if 'Bienvenido' in code:
+                    logged = True
+                else:
+                    logged = False
+
+        else:
+            talk('¿Qué deseas hacer?')
+            talk('¿Deseas comprobar algún regístro en concreto, listar usuarios, cerrar sesión o salir?')
+            request = audio_to_text().lower()
+            if 'comprobar registro' in request:
+                if comprobarRegistro():
+                    talk('El usuario está registrado en el sistema')
+                else:
+                    talk('El usuario no está registrado en el sistema')
+            elif ('listar usuarios' or 'lista los usuarios' or 'listar los usuarios') in request:
+                showUsers()
+                talk('Estos son los usuarios registrados:')
+                for persona in usuarios:
+                    talk(persona.name)
+            elif 'cerrar sesión' in request:
+                talk('Hasta la próxima')
+                logged = False
+            elif 'salir' in request:
+                talk('Hasta luego bombón')
+                guardar_datos_personas(usuarios)
+                stop = True
+            elif ('repetir' or 'repite') in request:
+                pass

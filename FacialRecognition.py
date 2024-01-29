@@ -46,6 +46,6 @@ class FacialRecognition:
         reconocido, nombre_encontrado = self.reconocer_persona(cara_control)
 
         if reconocido:
-            print(f"Bienvenido, {nombre_encontrado}!")
+            return(f"Bienvenido {nombre_encontrado}!")
         else:
-            print("No se encontró ninguna coincidencia con los usuarios registrados.")
+            return ("No se encontró ninguna coincidencia con los usuarios registrados.")
